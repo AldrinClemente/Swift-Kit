@@ -428,7 +428,6 @@
 				TargetAttributes = {
 					7F4BBB821C4CA7EE003D3CD2 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = 4YU3Y8VDGX;
 					};
 					7F4BBB8B1C4CA7EF003D3CD2 = {
 						CreatedOnToolsVersion = 7.2;
@@ -575,6 +574,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -593,6 +593,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
