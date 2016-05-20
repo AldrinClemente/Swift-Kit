@@ -33,6 +33,9 @@ public class Request {
     var isTrustedHost: Bool = false
     var logTag: String?
     
+    static var requestQueue: [Request] = []
+    static var pendingRequest: Request?
+    
     init(session: NSURLSession, method: Method, url: String, queryParameters: [String : AnyObject] = [:]) {
         self.session = session
         
@@ -99,6 +102,12 @@ public class Request {
         return self
     }
     
+    public func queue() -> Self {
+        Request.requestQueue.append(self)
+        executeFromQueueIfFree()
+        return self
+    }
+    
     public func execute() -> Self {
         task = session.dataTaskWithRequest(request, completionHandler: handleResponse)
         if isTrustedHost {
@@ -129,6 +138,13 @@ public class Request {
         return self
     }
     
+    private func executeFromQueueIfFree() {
+        if Request.pendingRequest == nil && Request.requestQueue.count > 0 {
+            Request.pendingRequest = Request.requestQueue.removeFirst()
+            Request.pendingRequest!.execute()
+        }
+    }
+    
     private func handleResponse(data: NSData?, response: NSURLResponse?, error: NSError?) {
         self.response = Response(originalRequest: self, data: data, httpResponse: response as? NSHTTPURLResponse, error: error)
         if logTag != nil {
@@ -144,6 +160,12 @@ public class Request {
             }
         }
         responseHandler?(response: self.response!)
+        if let pendingRequest = Request.pendingRequest {
+            if pendingRequest === self {
+                Request.pendingRequest = nil
+                executeFromQueueIfFree()
+            }
+        }
     }
 }
 
