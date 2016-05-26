@@ -49,6 +49,14 @@ public struct HTTP {
     public static func trustAllHosts() {
         sessionDelegate.trustAllHosts()
     }
+    
+    public static func getQueuedRequests() -> [Request] {
+        return Request.requestQueue
+    }
+    
+    public static func clearQueuedRequests() {
+        Request.requestQueue.removeAll()
+    }
 }
 
 class SessionDelegate: NSObject {
