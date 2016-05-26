@@ -96,7 +96,7 @@ public class Request {
     
     public func setBodyProvider(provider: () -> NSData) -> Self {
         bodyProvider = provider
-        return
+        return self
     }
     
     public func setLogTag(tag: String) -> Self {
