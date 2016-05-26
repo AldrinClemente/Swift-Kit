@@ -33,6 +33,8 @@ public class Request {
     var isTrustedHost: Bool = false
     var logTag: String?
     
+    var bodyProvider: (() -> NSData)?
+    
     static var requestQueue: [Request] = []
     static var pendingRequest: Request?
     
@@ -92,6 +94,10 @@ public class Request {
         return self
     }
     
+    public func setBodyProvider(provider: () -> NSData) {
+        bodyProvider = provider
+    }
+    
     public func setLogTag(tag: String) -> Self {
         self.logTag = tag
         return self
@@ -109,6 +115,9 @@ public class Request {
     }
     
     public func execute() -> Self {
+        if bodyProvider != nil {
+            request.HTTPBody = bodyProvider!()
+        }
         task = session.dataTaskWithRequest(request, completionHandler: handleResponse)
         if isTrustedHost {
             task.trustHost()
