@@ -64,6 +64,18 @@ public class Request {
         return self
     }
     
+    public func setHeader(key: String, value: String) -> Self {
+        request.setValue(value, forHTTPHeaderField: key)
+        return self
+    }
+    
+    public func setHeaders(headers: [String: String]) -> Self {
+        for (key, value) in headers {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        return self
+    }
+    
     public func setTimeout(seconds: NSTimeInterval) -> Self {
         request.timeoutInterval = seconds
         return self
