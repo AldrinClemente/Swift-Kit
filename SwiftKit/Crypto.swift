@@ -28,6 +28,8 @@ import CommonCrypto
 public struct Crypto {
     
     public struct Spec {
+        public init() {}
+        
         public var algorithm = EncryptionAlgorithm.AES256
         public var blockCipherMode = BlockCipherMode.CBC
         public var padding = Padding.PKCS7
