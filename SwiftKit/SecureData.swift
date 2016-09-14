@@ -46,7 +46,7 @@ public class SecureData {
     public var data: NSData {
         let data = rawData
         if self.password != nil {
-            return data.encrypt(self.password!, spec: defaultSpec) ?? data
+            return data.encrypt(self.password!, spec: SecureData.defaultSpec) ?? data
         } else {
             return data
         }
