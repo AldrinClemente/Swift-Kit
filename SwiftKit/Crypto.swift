@@ -27,18 +27,64 @@ import CommonCrypto
 
 public struct Crypto {
     
-    public struct Spec {
-        public init() {}
+    public class Spec {
+        public init() {
+        }
         
-        public var algorithm = EncryptionAlgorithm.AES256
-        public var blockCipherMode = BlockCipherMode.CBC
-        public var padding = Padding.PKCS7
-        public var saltLength = 16
-        public var hmacSaltLength = 16
-        public var hmacKeyLength = 16
-        public var keyDerivationIterations = 10000
-        public var prfAlgorithm = PRFAlgorithm.HMACSHA1 // Use HMACSHA1 to ensure data cross-compatibility with Android
-        public var macAlgorithm = MACAlgorithm.HMACSHA256
+        private var algorithm = EncryptionAlgorithm.AES256
+        private var blockCipherMode = BlockCipherMode.CBC
+        private var padding = Padding.PKCS7
+        private var saltLength = 16
+        private var hmacSaltLength = 16
+        private var hmacKeyLength = 16
+        private var keyDerivationIterations = 10000
+        private var prfAlgorithm = PRFAlgorithm.HMACSHA1 // Use HMACSHA1 to ensure data cross-compatibility with Android
+        private var macAlgorithm = MACAlgorithm.HMACSHA256
+        
+        public func setAlgorithm(algorithm: EncryptionAlgorithm) -> Spec {
+            self.algorithm = algorithm
+            return self
+        }
+        
+        public func setBlockCipherMode(mode: BlockCipherMode) -> Spec {
+            self.blockCipherMode = mode
+            return self
+        }
+        
+        public func setPadding(padding: Padding) -> Spec {
+            self.padding = padding
+            return self
+        }
+        
+        public func setSaltLength(length: Int) -> Spec {
+            self.saltLength = length
+            return self
+        }
+        
+        public func setHMACSaltLength(length: Int) -> Spec {
+            self.hmacSaltLength = length
+            return self
+        }
+        
+        public func setHMACKeyLength(length: Int) -> Spec {
+            self.hmacKeyLength = length
+            return self
+        }
+        
+        public func setKeyDerivationIterations(iterations: Int) -> Spec {
+            self.keyDerivationIterations = iterations
+            return self
+        }
+        
+        public func setPRFAlgorithm(algorithm: PRFAlgorithm) -> Spec {
+            self.prfAlgorithm = algorithm
+            return self
+        }
+        
+        public func setMACAlgorithm(algorithm: MACAlgorithm) -> Spec {
+            self.macAlgorithm = algorithm
+            return self
+        }
     }
     
     public static func encrypt(data: NSData, password: String, spec: Spec = Spec()) -> NSData? {

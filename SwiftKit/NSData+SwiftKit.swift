@@ -25,12 +25,12 @@
 import Foundation
 
 public extension NSData {
-    public func encrypt(password: String) -> NSData? {
-        return Crypto.encrypt(self, password: password)
+    public func encrypt(password: String, spec: Crypto.Spec = Crypto.Spec()) -> NSData? {
+        return Crypto.encrypt(self, password: password, spec: spec)
     }
     
-    public func decrypt(password: String) -> NSData? {
-        return Crypto.decrypt(self, password: password)
+    public func decrypt(password: String, spec: Crypto.Spec = Crypto.Spec()) -> NSData? {
+        return Crypto.decrypt(self, password: password, spec: spec)
     }
     
     public var base64EncodedData: NSData {

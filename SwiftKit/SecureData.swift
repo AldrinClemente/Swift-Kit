@@ -26,6 +26,8 @@ import Foundation
 
 
 public class SecureData {
+    private static var defaultSpec: Crypto.Spec = Crypto.Spec().setKeyDerivationIterations(128)
+    
     private var password: String?
     private var j: JSON
     
@@ -44,7 +46,7 @@ public class SecureData {
     public var data: NSData {
         let data = rawData
         if self.password != nil {
-            return data.encrypt(self.password!) ?? data
+            return data.encrypt(self.password!, spec: defaultSpec) ?? data
         } else {
             return data
         }
@@ -66,7 +68,7 @@ public class SecureData {
     public static func readData(data: NSData, password: String? = nil) -> JSON {
         var d = data
         if password != nil && data.length > 0 {
-            if let decryptedData = data.decrypt(password!) {
+            if let decryptedData = data.decrypt(password!, spec: defaultSpec) {
                 d = decryptedData
             }
         }
