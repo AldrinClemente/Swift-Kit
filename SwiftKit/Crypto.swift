@@ -297,6 +297,31 @@ public struct Crypto {
         }
     }
     
+    // Hash
+    // ********************************************************************************
+    
+    public static func SHA1(text: String) -> String {
+        return SHA1(text.dataUsingEncoding(NSUTF8StringEncoding)!)
+    }
+    
+    public static func SHA1(data: NSData) -> String {
+        var digest = [UInt8](count: Int(CC_SHA1_DIGEST_LENGTH), repeatedValue: 0)
+        CC_SHA1(data.bytes, CC_LONG(data.length), &digest)
+        let hexBytes = digest.map { String(format: "%02hhx", $0) }
+        return hexBytes.joinWithSeparator("")
+    }
+    
+    public static func MD5(text: String) -> String {
+        return MD5(text.dataUsingEncoding(NSUTF8StringEncoding)!)
+    }
+    
+    public static func MD5(data: NSData) -> String {
+        var digest = [UInt8](count: Int(CC_MD5_DIGEST_LENGTH), repeatedValue: 0)
+        CC_MD5(data.bytes, CC_LONG(data.length), &digest)
+        let hexBytes = digest.map { String(format: "%02hhx", $0) }
+        return hexBytes.joinWithSeparator("")
+    }
+    
     // Utilities
     // ********************************************************************************
     
