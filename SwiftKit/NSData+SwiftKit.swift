@@ -65,6 +65,14 @@ public extension NSData {
         }
         return hexadecimalString
     }
+    
+    public var sha1: String {
+        return Crypto.SHA1(self)
+    }
+    
+    public var md5: String {
+        return Crypto.MD5(self)
+    }
 }
 
 
