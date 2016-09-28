@@ -29,16 +29,14 @@
 		7F79E5461C4B1E4E00406DD2 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E5431C4B1E4E00406DD2 /* HTTP.swift */; };
 		7F79E5471C4B1E4E00406DD2 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E5441C4B1E4E00406DD2 /* Request.swift */; };
 		7F79E5481C4B1E4E00406DD2 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E5451C4B1E4E00406DD2 /* Response.swift */; };
-		7F79E54D1C4B1E5600406DD2 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E5491C4B1E5600406DD2 /* JSON.swift */; };
-		7F79E54E1C4B1E5600406DD2 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E54A1C4B1E5600406DD2 /* JSONConvertible.swift */; };
-		7F79E54F1C4B1E5600406DD2 /* JSONSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E54B1C4B1E5600406DD2 /* JSONSubscript.swift */; };
-		7F79E5501C4B1E5600406DD2 /* JSONError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F79E54C1C4B1E5600406DD2 /* JSONError.swift */; };
 		7FA2AE5D1C7EE74100652FDF /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA2AE5C1C7EE74100652FDF /* System.swift */; };
 		7FA2AE601C7F025D00652FDF /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA2AE5F1C7F025D00652FDF /* Timer.swift */; };
 		7FA3971D1C94F4CA00F938CF /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA3971C1C94F4CA00F938CF /* Label.swift */; };
 		7FA8D13F1C807E32004CB44F /* GameKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA8D13E1C807E32004CB44F /* GameKitHelper.swift */; };
 		7FAA992A1C7B2DF8003658B5 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FAA99291C7B2DF8003658B5 /* ActivityIndicator.swift */; };
 		7FB714C81C7B718800AB9E3C /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB714C71C7B718800AB9E3C /* Toast.swift */; };
+		7FE5C1A91D9B8DDA00DA2253 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE5C1A81D9B8DDA00DA2253 /* SwiftyJSON.swift */; };
+		7FE5C1AB1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE5C1AA1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,16 +96,14 @@
 		7F79E5431C4B1E4E00406DD2 /* HTTP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
 		7F79E5441C4B1E4E00406DD2 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		7F79E5451C4B1E4E00406DD2 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
-		7F79E5491C4B1E5600406DD2 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		7F79E54A1C4B1E5600406DD2 /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
-		7F79E54B1C4B1E5600406DD2 /* JSONSubscript.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONSubscript.swift; sourceTree = "<group>"; };
-		7F79E54C1C4B1E5600406DD2 /* JSONError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONError.swift; sourceTree = "<group>"; };
 		7FA2AE5C1C7EE74100652FDF /* System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		7FA2AE5F1C7F025D00652FDF /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		7FA3971C1C94F4CA00F938CF /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		7FA8D13E1C807E32004CB44F /* GameKitHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameKitHelper.swift; sourceTree = "<group>"; };
 		7FAA99291C7B2DF8003658B5 /* ActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		7FB714C71C7B718800AB9E3C /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		7FE5C1A81D9B8DDA00DA2253 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
+		7FE5C1AA1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftyJSON+SwiftKit.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +157,7 @@
 				7F4BBBB91C4DF59D003D3CD2 /* String+SwiftKit.swift */,
 				7F03A1121C9FBDA800A40C2B /* NSData+SwiftKit.swift */,
 				7F5702851CE1602C00E00431 /* Dictionary+SwiftKit.swift */,
+				7FE5C1AA1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -250,10 +247,7 @@
 		7F79E5371C4B1DA400406DD2 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				7F79E5491C4B1E5600406DD2 /* JSON.swift */,
-				7F79E54A1C4B1E5600406DD2 /* JSONConvertible.swift */,
-				7F79E54B1C4B1E5600406DD2 /* JSONSubscript.swift */,
-				7F79E54C1C4B1E5600406DD2 /* JSONError.swift */,
+				7FE5C1A81D9B8DDA00DA2253 /* SwiftyJSON.swift */,
 				7F79E5381C4B1DD200406DD2 /* SecureData.swift */,
 				7F7219D71CAE4D87003DBFBF /* SecureVar.swift */,
 			);
@@ -423,7 +417,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "True Banana";
 				TargetAttributes = {
 					7F4BBB821C4CA7EE003D3CD2 = {
@@ -435,10 +429,12 @@
 					};
 					7F79E51C1C4B1D7800406DD2 = {
 						CreatedOnToolsVersion = 7.2;
+						LastSwiftMigration = 0800;
 					};
 					7F79E5261C4B1D7800406DD2 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = 4YU3Y8VDGX;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -522,21 +518,19 @@
 				7FA2AE601C7F025D00652FDF /* Timer.swift in Sources */,
 				7FA2AE5D1C7EE74100652FDF /* System.swift in Sources */,
 				7F79E5461C4B1E4E00406DD2 /* HTTP.swift in Sources */,
-				7F79E54F1C4B1E5600406DD2 /* JSONSubscript.swift in Sources */,
 				7F79E5471C4B1E4E00406DD2 /* Request.swift in Sources */,
+				7FE5C1A91D9B8DDA00DA2253 /* SwiftyJSON.swift in Sources */,
 				7F79E53B1C4B1DDF00406DD2 /* Async.swift in Sources */,
 				7FB714C81C7B718800AB9E3C /* Toast.swift in Sources */,
-				7F79E5501C4B1E5600406DD2 /* JSONError.swift in Sources */,
 				7F4BBBBA1C4DF59D003D3CD2 /* String+SwiftKit.swift in Sources */,
 				7F5702861CE1602C00E00431 /* Dictionary+SwiftKit.swift in Sources */,
 				7F79E5411C4B1E0C00406DD2 /* Button.swift in Sources */,
-				7F79E54E1C4B1E5600406DD2 /* JSONConvertible.swift in Sources */,
 				7F79E5391C4B1DD200406DD2 /* SecureData.swift in Sources */,
 				7F79E5421C4B1E0C00406DD2 /* ToggleButton.swift in Sources */,
+				7FE5C1AB1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift in Sources */,
 				7F79E5481C4B1E4E00406DD2 /* Response.swift in Sources */,
 				7F7219D81CAE4D87003DBFBF /* SecureVar.swift in Sources */,
 				7F0F38A91C783BD800EA0660 /* IAPHelper.swift in Sources */,
-				7F79E54D1C4B1E5600406DD2 /* JSON.swift in Sources */,
 				7FAA992A1C7B2DF8003658B5 /* ActivityIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -575,6 +569,7 @@
 			baseConfigurationReference = 7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -594,6 +589,7 @@
 			baseConfigurationReference = 7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -641,8 +637,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -689,8 +687,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -710,6 +710,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -723,7 +724,7 @@
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -741,6 +742,7 @@
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -750,7 +752,7 @@
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -767,6 +769,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -777,6 +780,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.truebanana.SwiftKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -787,6 +791,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.truebanana.SwiftKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

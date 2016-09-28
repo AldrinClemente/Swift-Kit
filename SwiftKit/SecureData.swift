@@ -25,25 +25,25 @@
 import Foundation
 
 
-public class SecureData {
-    private static var defaultSpec: Crypto.Spec = Crypto.Spec().setKeyDerivationIterations(128)
+open class SecureData {
+    fileprivate static var defaultSpec: Crypto.Spec = Crypto.Spec().setKeyDerivationIterations(128)
     
-    private var password: String?
-    private var j: JSON
+    fileprivate var password: String?
+    fileprivate var j: JSON
     
-    public var json: JSON {
+    open var json: JSON {
         return j
     }
     
-    public var rawData: NSData {
+    open var rawData: Data {
         do {
             return try self.j.rawData()
         } catch {
-            return NSData()
+            return Data()
         }
     }
     
-    public var data: NSData {
+    open var data: Data {
         let data = rawData
         if self.password != nil {
             return data.encrypt(self.password!, spec: SecureData.defaultSpec) ?? data
@@ -52,163 +52,163 @@ public class SecureData {
         }
     }
     
-    public var string: String {
+    open var string: String {
         return j.stringValue
     }
     
-    public init(data: NSData = NSData(), password: String? = nil) {
+    public init(data: Data = Data(), password: String? = nil) {
         self.password = password
         self.j = SecureData.readData(data, password: password)
     }
     
-    public func loadData(data: NSData, password: String? = nil) {
+    open func loadData(_ data: Data, password: String? = nil) {
         self.j = SecureData.readData(data, password: password)
     }
     
-    public static func readData(data: NSData, password: String? = nil) -> JSON {
+    open static func readData(_ data: Data, password: String? = nil) -> JSON {
         var d = data
-        if password != nil && data.length > 0 {
+        if password != nil && data.count > 0 {
             if let decryptedData = data.decrypt(password!, spec: defaultSpec) {
                 d = decryptedData
             }
         }
-        let json = JSON(data: d, options: .AllowFragments)
-        return json.error == nil && json.type != .Null ? json : JSON()
+        let json = JSON(data: d, options: .allowFragments)
+        return json.error == nil && json.type != .null ? json : JSON()
     }
     
-    public func put(key: String, value: String) {
+    open func put(_ key: String, value: String) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: Int) {
+    open func put(_ key: String, value: Int) {
         print(j[key].int)
         print("setting value to \(value)")
         j[key].set(value)
         print(j[key].int)
     }
     
-    public func put(key: String, value: Double) {
+    open func put(_ key: String, value: Double) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: Float) {
+    open func put(_ key: String, value: Float) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: Bool) {
+    open func put(_ key: String, value: Bool) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: JSON) {
+    open func put(_ key: String, value: JSON) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: [JSON]) {
+    open func put(_ key: String, value: [JSON]) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: [String : JSON]) {
+    open func put(_ key: String, value: [String : JSON]) {
         j[key].set(value)
     }
     
-    public func put(key: String, value: [AnyObject]) {
+    open func put(_ key: String, value: [AnyObject]) {
         j[key].set(value)
         print(self.j)
     }
     
-    public func put(key: String, value: [String : AnyObject]) {
+    open func put(_ key: String, value: [String : AnyObject]) {
         j[key].set(value)
     }
     
-    public func getString(key: String) -> String? {
+    open func getString(_ key: String) -> String? {
         return j[key].string
     }
     
-    public func getInt(key: String) -> Int? {
+    open func getInt(_ key: String) -> Int? {
         return j[key].int
     }
     
-    public func getDouble(key: String) -> Double? {
+    open func getDouble(_ key: String) -> Double? {
         return j[key].double
     }
     
-    public func getFloat(key: String) -> Float? {
+    open func getFloat(_ key: String) -> Float? {
         return j[key].float
     }
     
-    public func getBool(key: String) -> Bool? {
+    open func getBool(_ key: String) -> Bool? {
         return j[key].bool
     }
     
-    public func getJSON(key: String) -> JSON {
+    open func getJSON(_ key: String) -> JSON {
         let json = j[key]
-        return json.type != .Null ? json : JSON()
+        return json.type != .null ? json : JSON()
     }
     
-    public func getJSONArray(key: String) -> [JSON] {
+    open func getJSONArray(_ key: String) -> [JSON] {
         return j[key].arrayValue
     }
     
-    public func getJSONDictionary(key: String) -> [String : JSON] {
+    open func getJSONDictionary(_ key: String) -> [String : JSON] {
         return j[key].dictionaryValue
     }
     
-    public func getString(key: String, defaultValue: String) -> String {
+    open func getString(_ key: String, defaultValue: String) -> String {
         return j[key].string ?? defaultValue
     }
     
-    public func getInt(key: String, defaultValue: Int) -> Int {
+    open func getInt(_ key: String, defaultValue: Int) -> Int {
         return j[key].int ?? defaultValue
     }
     
-    public func getDouble(key: String, defaultValue: Double) -> Double {
+    open func getDouble(_ key: String, defaultValue: Double) -> Double {
         return j[key].double ?? defaultValue
     }
     
-    public func getFloat(key: String, defaultValue: Float) -> Float {
+    open func getFloat(_ key: String, defaultValue: Float) -> Float {
         return j[key].float ?? defaultValue
     }
     
-    public func getBool(key: String, defaultValue: Bool) -> Bool {
+    open func getBool(_ key: String, defaultValue: Bool) -> Bool {
         return j[key].bool ?? defaultValue
     }
     
-    public func remove(key: String) {
+    open func remove(_ key: String) {
         j[key] = nil
     }
     
-    public func clear() {
+    open func clear() {
         j.dictionaryObject?.removeAll()
     }
 }
 
-public class SecureDataFile: SecureData {
-    private var fileURL: NSURL!
+open class SecureDataFile: SecureData {
+    fileprivate var fileURL: URL!
     
     public convenience init(fileName: String, password: String? = nil) {
-        let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-        let url = NSURL(fileURLWithPath: documentsPath).URLByAppendingPathComponent(fileName)
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        let url = URL(fileURLWithPath: documentsPath).appendingPathComponent(fileName)
         
         self.init(fileURL: url, password: password)
     }
     
-    public init(fileURL: NSURL, password: String? = nil) {
+    public init(fileURL: URL, password: String? = nil) {
         self.fileURL = fileURL
         
-        let data = NSData(contentsOfURL: fileURL) ?? NSData()
+        let data = (try? Data(contentsOf: fileURL)) ?? Data()
         super.init(data: data, password: password)
     }
     
-    public static func getDefault() -> SecureDataFile {
+    open static func getDefault() -> SecureDataFile {
         return SecureDataFile(fileName: "data")
     }
     
-    public func saveAsync() {
+    open func saveAsync() {
         print("Saving data...")
         Async.runOnBackgroundThread(task: {
             let data = self.data
-            if data.writeToURL(self.fileURL, atomically: true) {
-                print("Saved data successfully with \(data.length) byte(s)")
+            if (try? data.write(to: self.fileURL, options: [.atomic])) != nil {
+                print("Saved data successfully with \(data.count) byte(s)")
             } else {
                 print("Failed to write data")
             }

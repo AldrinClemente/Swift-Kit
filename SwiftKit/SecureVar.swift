@@ -25,7 +25,7 @@
 import Foundation
 
 public struct SecureVar<T> {
-    private var values: [T]
+    fileprivate var values: [T]
     public var index: Int = 0
     
     public var value: T {
@@ -39,7 +39,7 @@ public struct SecureVar<T> {
     }
     
     public init(value: T, size: Int = 128) {
-        self.values = [T](count: size, repeatedValue: value)
+        self.values = [T](repeating: value, count: size)
         self.value = value
     }
 }

@@ -29,15 +29,15 @@ import UIKit
 public struct Toast {
     
     public static var verticalOffset: CGFloat = 0.8
-    public static var textColor: UIColor = UIColor.whiteColor()
+    public static var textColor: UIColor = UIColor.white
     public static var backgroundColor: UIColor = UIColor(hex: 0x000000, alpha: 0xCC)
     
     class Toast {
         static var text: UILabel = UILabel()
     }
     
-    public static func show(text: String,
-                            duration: NSTimeInterval = 2.5,
+    public static func show(_ text: String,
+                            duration: TimeInterval = 2.5,
                             textColor: UIColor = textColor,
                             backgroundColor: UIColor = backgroundColor,
                             verticalOffset: CGFloat = verticalOffset,
@@ -45,7 +45,7 @@ public struct Toast {
         var view: UIView
         if parentView != nil {
             view = parentView!
-        } else if let rootView = UIApplication.sharedApplication().keyWindow?.subviews.last {
+        } else if let rootView = UIApplication.shared.keyWindow?.subviews.last {
             view = rootView
         } else {
             return
@@ -57,7 +57,7 @@ public struct Toast {
         }
         
         if Toast.text.text == nil {
-            Toast.text.textAlignment = NSTextAlignment.Center
+            Toast.text.textAlignment = NSTextAlignment.center
             Toast.text.numberOfLines = 8
             Toast.text.font = UIFont(name: Toast.text.font.fontName, size: 14)
             Toast.text.layer.cornerRadius = 8
@@ -86,9 +86,9 @@ public struct Toast {
         Toast.text.center = center
         
         
-        UIView.animateWithDuration(0.5,
+        UIView.animate(withDuration: 0.5,
             delay: duration - 0.5,
-            options: UIViewAnimationOptions.BeginFromCurrentState,
+            options: UIViewAnimationOptions.beginFromCurrentState,
             animations: {
                 Toast.text.alpha = 0
             },
@@ -102,7 +102,7 @@ public struct Toast {
 }
 
 extension UIViewController {
-    public func showToast(text: String, duration: NSTimeInterval = 2.5, verticalOffset: CGFloat = 0.8) {
+    public func showToast(_ text: String, duration: TimeInterval = 2.5, verticalOffset: CGFloat = 0.8) {
         Toast.show(text, duration: duration, verticalOffset: verticalOffset, parentView: view)
     }
 }

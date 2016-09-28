@@ -25,29 +25,29 @@
 import Foundation
 
 public extension String {
-    public func encrypt(password: String) -> NSData? {
-        return Crypto.encrypt(self.utf8EncodedData!, password: password)
+    public func encrypt(_ password: String) -> Data? {
+        return Crypto.encrypt(data: self.utf8EncodedData!, password: password)
     }
     
-    public func decrypt(password: String) -> NSData? {
-        return Crypto.decrypt(self.utf8EncodedData!, password: password)
+    public func decrypt(_ password: String) -> Data? {
+        return Crypto.decrypt(encryptedMessage: self.utf8EncodedData!, password: password)
     }
     
-    public var base64EncodedData: NSData? {
-        return self.dataUsingEncoding(NSUTF8StringEncoding)?.base64DecodedData
+    public var base64EncodedData: Data? {
+        return self.data(using: String.Encoding.utf8)?.base64DecodedData
     }
     
     public var base64EncodedString: String? {
         if let data = base64EncodedData {
-            return String(data: data, encoding: NSUTF8StringEncoding)
+            return String(data: data, encoding: String.Encoding.utf8)
         } else {
             return nil
         }
     }
     
-    public var base64DecodedData: NSData? {
-        if let data = self.dataUsingEncoding(NSUTF8StringEncoding) {
-            return NSData(base64EncodedData: data, options: .IgnoreUnknownCharacters)
+    public var base64DecodedData: Data? {
+        if let data = self.data(using: String.Encoding.utf8) {
+            return Data(base64Encoded: data, options: .ignoreUnknownCharacters)
         } else {
             return nil
         }
@@ -55,14 +55,14 @@ public extension String {
     
     public var base64DecodedString: String? {
         if let data = base64DecodedData {
-            return String(data: data, encoding: NSUTF8StringEncoding)
+            return String(data: data, encoding: String.Encoding.utf8)
         } else {
             return nil
         }
     }
     
-    public var utf8EncodedData: NSData? {
-        return self.dataUsingEncoding(NSUTF8StringEncoding)
+    public var utf8EncodedData: Data? {
+        return self.data(using: String.Encoding.utf8)
     }
     
     public var sha1: String {
@@ -78,8 +78,8 @@ public extension String {
     // http://www.ietf.org/rfc/rfc3986.txt
     // :returns: Return precent escaped string.
     public var stringByAddingPercentEncodingForURLQuery: String? {
-        let characterSet = NSMutableCharacterSet.alphanumericCharacterSet()
-        characterSet.addCharactersInString("-._~")
-        return self.stringByAddingPercentEncodingWithAllowedCharacters(characterSet)
+        let characterSet = NSMutableCharacterSet.alphanumeric()
+        characterSet.addCharacters(in: "-._~")
+        return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
     }
 }

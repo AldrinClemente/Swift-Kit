@@ -25,18 +25,18 @@
 import Foundation
 import UIKit
 
-@IBDesignable public class Label: UILabel {
-    @IBInspectable public var topInset: CGFloat = 0
-    @IBInspectable public var leftInset: CGFloat = 0
-    @IBInspectable public var bottomInset: CGFloat = 0
-    @IBInspectable public var rightInset: CGFloat = 0
+@IBDesignable open class Label: UILabel {
+    @IBInspectable open var topInset: CGFloat = 0
+    @IBInspectable open var leftInset: CGFloat = 0
+    @IBInspectable open var bottomInset: CGFloat = 0
+    @IBInspectable open var rightInset: CGFloat = 0
     
-    public override func drawTextInRect(rect: CGRect) {
-        super.drawTextInRect(UIEdgeInsetsInsetRect(rect, UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)))
+    open override func drawText(in rect: CGRect) {
+        super.drawText(in: UIEdgeInsetsInsetRect(rect, UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)))
     }
     
-    override public func intrinsicContentSize() -> CGSize {
-        var intrinsicSuperViewContentSize = super.intrinsicContentSize()
+    override open var intrinsicContentSize : CGSize {
+        var intrinsicSuperViewContentSize = super.intrinsicContentSize
         intrinsicSuperViewContentSize.height += topInset + bottomInset
         intrinsicSuperViewContentSize.width += leftInset + rightInset
         return intrinsicSuperViewContentSize

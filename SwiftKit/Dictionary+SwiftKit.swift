@@ -32,19 +32,19 @@ public extension Dictionary {
     // http://www.ietf.org/rfc/rfc3986.txt
     // :returns: String representation in the form of key1=value1&key2=value2 where the keys and values are percent escaped
     public var stringFromQueryParameters: String {
-        return arrayFromQueryParameters.joinWithSeparator("&")
+        return arrayFromQueryParameters.joined(separator: "&")
     }
     
     public var stringFromSortedQueryParameters: String {
         var parameters = arrayFromQueryParameters
-        parameters.sortInPlace()
-        return parameters.joinWithSeparator("&")
+        parameters.sort()
+        return parameters.joined(separator: "&")
     }
     
     var arrayFromQueryParameters: [String] {
         return self.map { (k, v) -> String in
-            let key = String(k).stringByAddingPercentEncodingForURLQuery!
-            let value = String(v).stringByAddingPercentEncodingForURLQuery!
+            let key = String(describing: k).stringByAddingPercentEncodingForURLQuery!
+            let value = String(describing: v).stringByAddingPercentEncodingForURLQuery!
             return "\(key)=\(value)"
         }
     }

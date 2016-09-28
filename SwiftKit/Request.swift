@@ -24,123 +24,122 @@
 
 import Foundation
 
-public class Request {
-    var session: NSURLSession!
-    var task: NSURLSessionTask!
-    var request: NSMutableURLRequest!
+open class Request {
+    var session: URLSession!
+    var task: URLSessionTask!
+    var request: URLRequest!
     var response: Response?
     var responseHandler: ResponseHandler?
     var isTrustedHost: Bool = false
     var logTag: String?
     
-    var bodyProvider: (() -> NSData)?
+    var bodyProvider: (() -> Data)?
     
     static var requestQueue: [Request] = []
     static var pendingRequest: Request?
     
-    init(session: NSURLSession, method: Method, url: String, queryParameters: [String : AnyObject] = [:]) {
+    init(session: URLSession, method: Method, url: String, queryParameters: [String : AnyObject] = [:]) {
         self.session = session
         
         let encodedURL = queryParameters.count > 0 ? "\(url)?\(queryParameters.stringFromQueryParameters)" : url
         
-        request = NSMutableURLRequest(URL: NSURL(string: encodedURL)!)
-        request.HTTPMethod = method.rawValue
+        request = URLRequest(url: URL(string: encodedURL)!)
+        request.httpMethod = method.rawValue
     }
     
-    public func handleResponse(responseHandler: ResponseHandler) -> Self {
+    open func setResponseHandler(_ responseHandler: @escaping ResponseHandler) -> Self {
         self.responseHandler = responseHandler
         return self
     }
     
-    public func addHeader(key: String, value: String) -> Self {
+    open func addHeader(_ key: String, value: String) -> Self {
         request.addValue(value, forHTTPHeaderField: key)
         return self
     }
     
-    public func addHeaders(headers: [String: String]) -> Self {
+    open func addHeaders(_ headers: [String: String]) -> Self {
         for (key, value) in headers {
             request.addValue(value, forHTTPHeaderField: key)
         }
         return self
     }
     
-    public func setHeader(key: String, value: String) -> Self {
+    open func setHeader(_ key: String, value: String) -> Self {
         request.setValue(value, forHTTPHeaderField: key)
         return self
     }
     
-    public func setHeaders(headers: [String: String]) -> Self {
+    open func setHeaders(_ headers: [String: String]) -> Self {
         for (key, value) in headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
         return self
     }
     
-    public func setTimeout(seconds: NSTimeInterval) -> Self {
+    open func setTimeout(_ seconds: TimeInterval) -> Self {
         request.timeoutInterval = seconds
         return self
     }
     
-    public func setBody(body: JSON) -> Self {
+    open func setBody(_ body: JSON) -> Self {
         do {
-            request.HTTPBody = try body.rawData()
+            request.httpBody = try body.rawData()
         } catch {
             // TODO
         }
         return self
     }
     
-    public func setBody(body: NSData) -> Self {
-        request.HTTPBody = body
+    open func setBody(_ body: Data) -> Self {
+        request.httpBody = body
         return self
     }
     
-    public func setBody(body: MultiPartContent) -> Self {
-        request.HTTPBody = body.data
-        addHeader("Content-Type", value: "multipart/form-data;boundary=\(body.boundary)")
+    open func setBody(_ body: MultiPartContent) -> Self {
+        request.httpBody = body.data
+        return addHeader("Content-Type", value: "multipart/form-data;boundary=\(body.boundary)")
+    }
+    
+    open func setBody(_ body: String) -> Self {
+        request.httpBody = body.data(using: String.Encoding.utf8)
         return self
     }
     
-    public func setBody(body: String) -> Self {
-        request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding)
-        return self
-    }
-    
-    public func setBodyProvider(provider: () -> NSData) -> Self {
+    open func setBodyProvider(_ provider: @escaping () -> Data) -> Self {
         bodyProvider = provider
         return self
     }
     
-    public func setLogTag(tag: String) -> Self {
+    open func setLogTag(_ tag: String) -> Self {
         self.logTag = tag
         return self
     }
     
-    public func trustHost() -> Self {
+    open func trustHost() -> Self {
         isTrustedHost = true
         return self
     }
     
-    public func queue() -> Self {
+    open func queue() -> Self {
         Request.requestQueue.append(self)
         executeFromQueueIfFree()
         return self
     }
     
-    public func execute() -> Self {
+    open func execute() -> Self {
         if bodyProvider != nil {
-            request.HTTPBody = bodyProvider!()
+            request.httpBody = bodyProvider!()
         }
-        task = session.dataTaskWithRequest(request, completionHandler: handleResponse)
+        task = session.dataTask(with: request, completionHandler: handleResponse)
         if isTrustedHost {
             task.trustHost()
         }
         if logTag != nil {
-            print("\(logTag!) Endpoint: \(request.URL!.absoluteString)")
+            print("\(logTag!) Endpoint: \(request.url!.absoluteString)")
             for (k, v) in request.allHTTPHeaderFields! {
                 print("\(logTag!) Request Header: \(k): \(v)")
             }
-            if let body = request.HTTPBody?.utf8EncodedString {
+            if let body = request.httpBody?.utf8EncodedString {
                 print("\(logTag!) Request Body: \(body)")
             } else {
                 print("\(logTag!) Request Body: nil")
@@ -150,25 +149,25 @@ public class Request {
         return self
     }
     
-    public func cancel() -> Self {
+    open func cancel() -> Self {
         task.cancel()
         return self
     }
     
-    public func suspend() -> Self {
+    open func suspend() -> Self {
         task.suspend()
         return self
     }
     
-    private func executeFromQueueIfFree() {
+    fileprivate func executeFromQueueIfFree() {
         if Request.pendingRequest == nil && Request.requestQueue.count > 0 {
             Request.pendingRequest = Request.requestQueue.removeFirst()
             Request.pendingRequest!.execute()
         }
     }
     
-    private func handleResponse(data: NSData?, response: NSURLResponse?, error: NSError?) {
-        self.response = Response(originalRequest: self, data: data, httpResponse: response as? NSHTTPURLResponse, error: error)
+    fileprivate func handleResponse(_ data: Data?, response: URLResponse?, error: Error?) {
+        self.response = Response(originalRequest: self, data: data, httpResponse: response as? HTTPURLResponse, error: error)
         if logTag != nil {
             if let statusMessage = self.response!.statusMessage {
                 print("\(logTag!) Response Message: \(statusMessage)")
@@ -181,7 +180,7 @@ public class Request {
                 print("\(logTag!) Response Content: nil")
             }
         }
-        responseHandler?(response: self.response!)
+        responseHandler?(self.response!)
         if let pendingRequest = Request.pendingRequest {
             if pendingRequest === self {
                 Request.pendingRequest = nil
@@ -191,32 +190,32 @@ public class Request {
     }
 }
 
-extension NSURLSessionTask {
+extension URLSessionTask {
     func trustHost() {
         TrustedTaskHostsHolder.trustedHosts[taskIdentifier] = true
     }
     
     func checkAndConsumeTrust() -> Bool {
-        return TrustedTaskHostsHolder.trustedHosts.removeValueForKey(taskIdentifier) ?? false
+        return TrustedTaskHostsHolder.trustedHosts.removeValue(forKey: taskIdentifier) ?? false
     }
     
-    private class TrustedTaskHostsHolder {
+    fileprivate class TrustedTaskHostsHolder {
         static var trustedHosts: [Int : Bool] = [:]
     }
 }
 
 
-public class MultiPartContent {
+open class MultiPartContent {
     var boundary: String = "*********"
     var parts: [Part] = []
-    public var data: NSData {
-        let data: NSMutableData = NSMutableData()
+    open var data: Data {
+        var data: Data = Data()
         for part in parts {
             data.appendString("--\(boundary)\r\n")
-            data.appendData(part.data)
+            data.append(part.data)
         }
         data.appendString("--\(boundary)--\r\n")
-        return data
+        return data as Data
     }
     
     public init() {}
@@ -230,38 +229,38 @@ public class MultiPartContent {
         self.parts = parts
     }
     
-    public func setBoundary(boundary: String) {
+    open func setBoundary(_ boundary: String) {
         self.boundary = boundary
     }
     
-    public func addPart(part: Part) {
+    open func addPart(_ part: Part) {
         parts += [part]
     }
     
-    public func addPart(name: String, value: String, headers: [String : String] = [:]) {
+    open func addPart(_ name: String, value: String, headers: [String : String] = [:]) {
         addPart(Part(name: name, value: value, headers: headers))
     }
     
-    public func addPart(name: String, data: NSData, fileName: String, headers: [String : String] = [:]) {
+    open func addPart(_ name: String, data: Data, fileName: String, headers: [String : String] = [:]) {
         addPart(Part(name: name, fileName: fileName, data: data, headers: headers))
     }
     
-    public func addPart(name: String, path: NSURL, fileName: String = "", headers: [String : String] = [:]) {
-        if let data = NSData(contentsOfURL: path) {
-            addPart(name, data: data, fileName: fileName != "" ? fileName : path.lastPathComponent!, headers: headers)
+    open func addPart(_ name: String, path: URL, fileName: String = "", headers: [String : String] = [:]) {
+        if let data = try? Data(contentsOf: path) {
+            addPart(name, data: data, fileName: fileName != "" ? fileName : path.lastPathComponent, headers: headers)
         }
     }
     
     public struct Part {
-        var data: NSMutableData = NSMutableData()
+        var data: Data = Data()
         
-        init(name: String, fileName: String, data: NSData, headers: [String : String] = [:]) {
+        init(name: String, fileName: String, data: Data, headers: [String : String] = [:]) {
             self.data.appendString("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fileName)\"\r\n")
             for (key, value) in headers {
                 self.data.appendString("\(key): \(value)\r\n")
             }
             self.data.appendString("\r\n")
-            self.data.appendData(data)
+            self.data.append(data)
             self.data.appendString("\r\n")
         }
         
@@ -289,11 +288,11 @@ public enum Method: String, CustomStringConvertible {
 }
 
 
-public enum RequestError: ErrorType {
-    case Timeout
-    case AppTransportSecurity
-    case ServerAuthenticationFailed
-    case ClientAuthenticationFailed
-    case NoNetworkConnection
-    case Other(error: NSURLError)
+public enum RequestError: Error {
+    case timeout
+    case appTransportSecurity
+    case serverAuthenticationFailed
+    case clientAuthenticationFailed
+    case noNetworkConnection
+    case other(error: URLError)
 }

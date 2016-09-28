@@ -24,44 +24,41 @@
 
 import Foundation
 
-public extension NSData {
-    public func encrypt(password: String, spec: Crypto.Spec = Crypto.Spec()) -> NSData? {
-        return Crypto.encrypt(self, password: password, spec: spec)
+public extension Data {
+    public func encrypt(_ password: String, spec: Crypto.Spec? = Crypto.Spec()) -> Data? {
+        return Crypto.encrypt(data: self, password: password, spec: spec!)
     }
     
-    public func decrypt(password: String, spec: Crypto.Spec = Crypto.Spec()) -> NSData? {
-        return Crypto.decrypt(self, password: password, spec: spec)
+    public func decrypt(_ password: String, spec: Crypto.Spec? = Crypto.Spec()) -> Data? {
+        return Crypto.decrypt(encryptedMessage: self, password: password, spec: spec!)
     }
     
-    public var base64EncodedData: NSData {
-        return self.base64EncodedDataWithOptions(.Encoding64CharacterLineLength)
+    public var base64EncodedData: Data {
+        return self.base64EncodedData(options: .lineLength64Characters)
     }
     
     public var base64EncodedString: String {
-        return self.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        return self.base64EncodedString(options: .lineLength64Characters)
     }
     
-    public var base64DecodedData: NSData? {
-        return NSData(base64EncodedData: self, options: .IgnoreUnknownCharacters)
+    public var base64DecodedData: Data? {
+        return Data(base64Encoded: self, options: .ignoreUnknownCharacters)
     }
     
     public var base64DecodedString: String? {
-        return base64DecodedData != nil ? String(data: base64DecodedData!, encoding: NSUTF8StringEncoding) : nil
+        return base64DecodedData != nil ? String(data: base64DecodedData!, encoding: String.Encoding.utf8) : nil
     }
     
     public var utf8EncodedString: String? {
-        return String(data: self, encoding: NSUTF8StringEncoding)
+        return String(data: self, encoding: String.Encoding.utf8)
     }
     
     public var hexString: String? {
-        let buffer = UnsafePointer<UInt8>(self.bytes)
-        if buffer == nil {
-            return nil
-        }
+        let buffer = (self as NSData).bytes.bindMemory(to: UInt8.self, capacity: self.count)
         
         var hexadecimalString = ""
-        for i in 0..<self.length {
-            hexadecimalString += String(format: "%02x", buffer.advancedBy(i).memory)
+        for i in 0..<self.count {
+            hexadecimalString += String(format: "%02x", buffer.advanced(by: i).pointee)
         }
         return hexadecimalString
     }
@@ -76,9 +73,9 @@ public extension NSData {
 }
 
 
-public extension NSMutableData {
-    func appendString(string: String) {
-        let data = string.dataUsingEncoding(NSUTF8StringEncoding)
-        appendData(data!)
+public extension Data {
+    mutating func appendString(_ string: String) {
+        let data = string.data(using: String.Encoding.utf8)
+        append(data!)
     }
 }

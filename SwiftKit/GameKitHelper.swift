@@ -28,21 +28,21 @@ import GameKit
 
 public typealias LeaderboardScore = Int
 public typealias LeaderboardIdentifier = String
-public typealias ScoreSubmissionHandler = (authenticated: Bool, error: NSError?) -> Void
-public typealias SaveGameDataHandler = (savedGame: GKSavedGame?, error: NSError?) -> Void
-public typealias FetchAllSavedGamesHandler = (savedGames: [GKSavedGame]?, error: NSError?) -> Void
-public typealias FetchSavedGameHandler = (savedGame: GKSavedGame?, error: NSError?) -> Void
-public typealias LoadGameDataHandler = (data: NSData?, error: NSError?) -> Void
-public typealias DeleteGameDataHandler = (error: NSError?) -> Void
+public typealias ScoreSubmissionHandler = (_ authenticated: Bool, _ error: Error?) -> Void
+public typealias SaveGameDataHandler = (_ savedGame: GKSavedGame?, _ error: Error?) -> Void
+public typealias FetchAllSavedGamesHandler = (_ savedGames: [GKSavedGame]?, _ error: Error?) -> Void
+public typealias FetchSavedGameHandler = (_ savedGame: GKSavedGame?, _ error: Error?) -> Void
+public typealias LoadGameDataHandler = (_ data: Data?, _ error: Error?) -> Void
+public typealias DeleteGameDataHandler = (_ error: Error?) -> Void
 
 public struct GameKitHelper {
-    private static let GameKitHelperErrorDomain: String = "GameKitHelperErrorDomain"
+    fileprivate static let GameKitHelperErrorDomain: String = "GameKitHelperErrorDomain"
     
     public static var player: GKLocalPlayer {
         return GKLocalPlayer.localPlayer()
     }
     
-    private static let gameCenterControllerDelegate: GameCenterControllerDelegate = GameCenterControllerDelegate()
+    fileprivate static let gameCenterControllerDelegate: GameCenterControllerDelegate = GameCenterControllerDelegate()
     
     public static func authenticateUser() {
         player.authenticateHandler = handleAuthentication
@@ -50,11 +50,11 @@ public struct GameKitHelper {
 }
 
 extension GameKitHelper {
-    static func handleAuthentication(viewController: UIViewController?, error: NSError?) {
+    static func handleAuthentication(_ viewController: UIViewController?, error: Error?) {
         if viewController != nil {
             print("Authenticating...")
-            let vc = UIApplication.sharedApplication().keyWindow?.rootViewController
-            vc?.presentViewController(
+            let vc = UIApplication.shared.keyWindow?.rootViewController
+            vc?.present(
                 viewController!,
                 animated: true,
                 completion: nil)
@@ -66,80 +66,80 @@ extension GameKitHelper {
 }
 
 extension GameKitHelper {
-    public static func submitScores(scores: [LeaderboardIdentifier : LeaderboardScore], completionHandler: ScoreSubmissionHandler? = nil) {
+    public static func submitScores(_ scores: [LeaderboardIdentifier : LeaderboardScore], completionHandler: ScoreSubmissionHandler? = nil) {
         var scoreArray: [GKScore] = []
         for (leaderboardId, scoreValue) in scores {
             let score = GKScore(leaderboardIdentifier: leaderboardId)
             score.value = Int64(scoreValue)
             scoreArray.append(score)
         }
-        GKScore.reportScores(scoreArray) { error in
-            completionHandler?(authenticated: player.authenticated, error: error)
-        }
+        GKScore.report(scoreArray, withCompletionHandler: { error in
+            completionHandler?(player.isAuthenticated, error)
+        })
     }
     
     public static func showLeaderboards() {
         let viewController = GKGameCenterViewController()
         viewController.gameCenterDelegate = gameCenterControllerDelegate
         
-        let vc = UIApplication.sharedApplication().keyWindow?.rootViewController
-        vc?.presentViewController(
+        let vc = UIApplication.shared.keyWindow?.rootViewController
+        vc?.present(
             viewController,
             animated: true,
             completion: nil)
     }
     
-    public class GameCenterControllerDelegate: NSObject, GKGameCenterControllerDelegate {
-        public func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController) {
-            gameCenterViewController.dismissViewControllerAnimated(true, completion: nil)
+    open class GameCenterControllerDelegate: NSObject, GKGameCenterControllerDelegate {
+        open func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
+            gameCenterViewController.dismiss(animated: true, completion: nil)
         }
     }
 }
 
 extension GameKitHelper {
-    public static func saveGameData(data: NSData, name: String, completionHandler: SaveGameDataHandler? = nil) {
+    public static func saveGameData(_ data: Data, name: String, completionHandler: SaveGameDataHandler? = nil) {
         player.saveGameData(data, withName: name, completionHandler: completionHandler)
     }
     
-    public static func fetchAllSavedGameData(completionHandler: FetchAllSavedGamesHandler) {
-        player.fetchSavedGamesWithCompletionHandler(completionHandler)
+    public static func fetchAllSavedGameData(_ completionHandler: @escaping FetchAllSavedGamesHandler) {
+        player.fetchSavedGames(completionHandler: completionHandler)
     }
     
-    public static func fetchSavedGameData(name: String, completionHandler: FetchSavedGameHandler) {
-        player.fetchSavedGamesWithCompletionHandler() { savedGames, error in
+    public static func fetchSavedGameData(_ name: String, completionHandler: @escaping FetchSavedGameHandler) {
+        player.fetchSavedGames() { savedGames, error in
             if error != nil {
-                completionHandler(savedGame: nil, error: error)
+                completionHandler(nil, error as NSError?)
             } else {
                 for savedGame in savedGames! {
                     if savedGame.name == name {
-                        completionHandler(savedGame: savedGame, error: nil)
+                        completionHandler(savedGame, nil)
                         return
                     }
                 }
-                completionHandler(savedGame: nil, error: nil)
+                completionHandler(nil, nil)
             }
         }
     }
     
-    public static func loadGameData(savedGame: GKSavedGame, completionHandler: LoadGameDataHandler) {
-        savedGame.loadDataWithCompletionHandler(completionHandler)
+    public static func loadGameData(_ savedGame: GKSavedGame, completionHandler: @escaping LoadGameDataHandler) {
+        savedGame.loadData(completionHandler: completionHandler)
     }
     
-    public static func loadGameData(name: String, completionHandler: LoadGameDataHandler) {
+    public static func loadGameData(_ name: String, completionHandler: @escaping LoadGameDataHandler) {
         fetchSavedGameData(name) { savedGame, error in
             if error != nil {
-                completionHandler(data: nil, error: error)
+                completionHandler(nil, error)
             } else {
                 if savedGame != nil {
                     loadGameData(savedGame!, completionHandler: completionHandler)
                 } else {
-                    completionHandler(data: nil, error: nil)
+                    completionHandler(nil, nil)
                 }
             }
         }
     }
     
-    public static func deleteGameData(name: String, completionHandler: DeleteGameDataHandler) {
-        player.deleteSavedGamesWithName(name, completionHandler: completionHandler)
+    public static func deleteGameData(_ name: String, completionHandler: @escaping DeleteGameDataHandler) {
+        player.deleteSavedGames(withName: name, completionHandler: completionHandler)
     }
 }

@@ -25,23 +25,23 @@
 import Foundation
 import UIKit
 
-@IBDesignable public class Button: UIButton {
-    @IBInspectable public var defaultBackgroundColor: UIColor? {
+@IBDesignable open class Button: UIButton {
+    @IBInspectable open var defaultBackgroundColor: UIColor? {
         didSet {
             super.backgroundColor = defaultBackgroundColor
         }
     }
-    @IBInspectable public var highlightedBackgroundColor: UIColor?
-    @IBInspectable public var disabledBackgroundColor: UIColor?
-    @IBInspectable public var borderColor: UIColor? {
+    @IBInspectable open var highlightedBackgroundColor: UIColor?
+    @IBInspectable open var disabledBackgroundColor: UIColor?
+    @IBInspectable open var borderColor: UIColor? {
         get {
-            return UIColor(CGColor: layer.borderColor!)
+            return UIColor(cgColor: layer.borderColor!)
         }
         set {
-            layer.borderColor = newValue?.CGColor
+            layer.borderColor = newValue?.cgColor
         }
     }
-    @IBInspectable public var borderWidth: CGFloat {
+    @IBInspectable open var borderWidth: CGFloat {
         get {
             return layer.borderWidth
         }
@@ -49,7 +49,7 @@ import UIKit
             layer.borderWidth = newValue
         }
     }
-    @IBInspectable public var cornerRadius: CGFloat {
+    @IBInspectable open var cornerRadius: CGFloat {
         get {
             return layer.cornerRadius
         }
@@ -59,28 +59,28 @@ import UIKit
         }
     }
     
-    override public var backgroundColor: UIColor? {
+    override open var backgroundColor: UIColor? {
         get {
-            return enabled ? (highlighted ? highlightedBackgroundColor : defaultBackgroundColor) : disabledBackgroundColor
+            return isEnabled ? (isHighlighted ? highlightedBackgroundColor : defaultBackgroundColor) : disabledBackgroundColor
         }
         set {
             super.backgroundColor = newValue
         }
     }
     
-    override public var highlighted: Bool {
+    override open var isHighlighted: Bool {
         didSet {
             refreshBackgroundColor()
         }
     }
     
-    override public var enabled: Bool {
+    override open var isEnabled: Bool {
         didSet {
             refreshBackgroundColor()
         }
     }
     
     func refreshBackgroundColor() {
-        backgroundColor = enabled ? (highlighted ? highlightedBackgroundColor : defaultBackgroundColor) : disabledBackgroundColor
+        backgroundColor = isEnabled ? (isHighlighted ? highlightedBackgroundColor : defaultBackgroundColor) : disabledBackgroundColor
     }
 }

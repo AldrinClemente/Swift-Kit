@@ -26,19 +26,19 @@ import Foundation
 import UIKit
 
 public protocol ToggleButtonDelegate {
-    func toggleButton(toggleButton: ToggleButton, didBecomeActive: Bool)
+    func toggleButton(_ toggleButton: ToggleButton, didBecomeActive: Bool)
 }
 
-@IBDesignable public class ToggleButton: Button {
+@IBDesignable open class ToggleButton: Button {
     
-    @IBInspectable public var activatedBackgroundColor: UIColor?
+    @IBInspectable open var activatedBackgroundColor: UIColor?
     
-    @IBInspectable public var activated: Bool = false {
+    @IBInspectable open var activated: Bool = false {
         didSet {
             refreshBackgroundColor()
         }
     }
-    override public var backgroundColor: UIColor? {
+    override open var backgroundColor: UIColor? {
         get {
             return activated ? activatedBackgroundColor : defaultBackgroundColor
         }
@@ -52,15 +52,15 @@ public protocol ToggleButtonDelegate {
     }
     
     #if !TARGET_INTERFACE_BUILDER
-    private var delegate: ToggleButtonDelegate?
+    fileprivate var delegate: ToggleButtonDelegate?
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         delegate = self
-        self.addTarget(self, action: #selector(ToggleButton.didReceiveTouchUpInside(_:)), forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: #selector(ToggleButton.didReceiveTouchUpInside(_:)), for: .touchUpInside)
     }
     
-    func didReceiveTouchUpInside(sender: ToggleButton) {
+    func didReceiveTouchUpInside(_ sender: ToggleButton) {
         activated = !activated
         delegate?.toggleButton(self, didBecomeActive: activated)
     }
@@ -68,5 +68,5 @@ public protocol ToggleButtonDelegate {
 }
 
 extension ToggleButton: ToggleButtonDelegate {
-    public func toggleButton(toggleButton: ToggleButton, didBecomeActive: Bool) {}
+    public func toggleButton(_ toggleButton: ToggleButton, didBecomeActive: Bool) {}
 }

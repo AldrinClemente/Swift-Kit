@@ -25,31 +25,31 @@
 import Foundation
 
 public struct Timer {
-    static var timers: [String : NSDate] = [:]
+    static var timers: [String : Date] = [:]
     
-    public static func start(timerKey: String = "default") {
-        timers[timerKey] = NSDate()
+    public static func start(_ timerKey: String = "default") {
+        timers[timerKey] = Date()
     }
     
-    public static func elapsedTime(timerKey: String = "default") -> NSTimeInterval {
-        let now = NSDate()
+    public static func elapsedTime(_ timerKey: String = "default") -> TimeInterval {
+        let now = Date()
         let before = timers[timerKey]
-        return before != nil ? now.timeIntervalSinceDate(before!) : 0
+        return before != nil ? now.timeIntervalSince(before!) : 0
     }
     
-    public static func reset(timerKey: String = "default") {
-        timers[timerKey]? = NSDate()
+    public static func reset(_ timerKey: String = "default") {
+        timers[timerKey]? = Date()
     }
     
-    public static func lap(timerKey: String = "default") -> NSTimeInterval {
+    public static func lap(_ timerKey: String = "default") -> TimeInterval {
         let e = elapsedTime(timerKey)
         reset(timerKey)
         return e
     }
     
-    public static func stop(timerKey: String = "default") -> NSTimeInterval {
+    public static func stop(_ timerKey: String = "default") -> TimeInterval {
         let e = elapsedTime(timerKey)
-        timers.removeValueForKey(timerKey)
+        timers.removeValue(forKey: timerKey)
         return e
     }
 }

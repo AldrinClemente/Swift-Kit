@@ -23,31 +23,51 @@
 //
 
 import Foundation
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l >= r
+  default:
+    return !(lhs < rhs)
+  }
+}
+
 
 public struct Response {
-    public var rawError: NSURLError?
-    var _data: NSData?
-    var httpResponse: NSHTTPURLResponse?
+    public var rawError: URLError?
+    var _data: Data?
+    var httpResponse: HTTPURLResponse?
     public var originalRequest: Request
     public var string: String? {
-        return _data != nil ? String(data: _data!, encoding: NSUTF8StringEncoding) : nil
+        return _data != nil ? String(data: _data!, encoding: String.Encoding.utf8) : nil
     }
     public var json: JSON? {
-        return _data != nil ? JSON(data: _data!, options: .AllowFragments) : nil
+        return _data != nil ? JSON(data: _data!, options: .allowFragments) : nil
     }
-    public var data: NSData? {
+    public var data: Data? {
         return _data
     }
     public var statusCode: Int? {
         return httpResponse?.statusCode
     }
     public var statusDescription: String? {
-        return statusCode != nil ? NSHTTPURLResponse.localizedStringForStatusCode(statusCode!).capitalizedString : nil
+        return statusCode != nil ? HTTPURLResponse.localizedString(forStatusCode: statusCode!).capitalized : nil
     }
     public var statusMessage: String? {
         return statusCode != nil ? "\(statusCode!) \(statusDescription!)" : nil
     }
-    public var headers: [NSObject : AnyObject] {
+    public var headers: [AnyHashable: Any] {
         return httpResponse?.allHeaderFields ?? [:]
     }
     public var isInformational: Bool {
@@ -66,29 +86,29 @@ public struct Response {
         return statusCode >= 500 && statusCode < 600
     }
     public var error: RequestError? {
-        if let e = rawError?.rawValue {
+        if let e = rawError?.errorCode {
             switch e {
             case NSURLErrorTimedOut:
-                return RequestError.Timeout
+                return RequestError.timeout
             case NSURLErrorServerCertificateHasBadDate,
             NSURLErrorServerCertificateUntrusted,
             NSURLErrorServerCertificateHasUnknownRoot,
             NSURLErrorServerCertificateNotYetValid:
-                return RequestError.ServerAuthenticationFailed
+                return RequestError.serverAuthenticationFailed
             case NSURLErrorClientCertificateRejected,
             NSURLErrorClientCertificateRequired:
-                return RequestError.ClientAuthenticationFailed
+                return RequestError.clientAuthenticationFailed
             case NSURLErrorNotConnectedToInternet:
-                return RequestError.NoNetworkConnection
+                return RequestError.noNetworkConnection
             default:
                 if #available(iOS 9.0, *) {
                     if e == NSURLErrorAppTransportSecurityRequiresSecureConnection {
-                        return RequestError.AppTransportSecurity
+                        return RequestError.appTransportSecurity
                     } else {
-                        return RequestError.Other(error: rawError!)
+                        return RequestError.other(error: rawError!)
                     }
                 } else {
-                    return RequestError.Other(error: rawError!)
+                    return RequestError.other(error: rawError!)
                 }
             }
         } else {
@@ -96,13 +116,13 @@ public struct Response {
         }
     }
     
-    init(originalRequest: Request, data: NSData?, httpResponse: NSHTTPURLResponse?, error: NSError?) {
+    init(originalRequest: Request, data: Data?, httpResponse: HTTPURLResponse?, error: Error?) {
         self.originalRequest = originalRequest
         if error == nil {
             self._data = data
             self.httpResponse = httpResponse
         } else {
-            rawError = error as? NSURLError
+            rawError = error as? URLError
         }
     }
 }

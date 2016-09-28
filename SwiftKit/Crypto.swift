@@ -27,93 +27,93 @@ import CommonCrypto
 
 public struct Crypto {
     
-    public class Spec {
+    open class Spec {
         public init() {
         }
         
-        private var algorithm = EncryptionAlgorithm.AES256
-        private var blockCipherMode = BlockCipherMode.CBC
-        private var padding = Padding.PKCS7
-        private var saltLength = 16
-        private var hmacSaltLength = 16
-        private var hmacKeyLength = 16
-        private var keyDerivationIterations = 10000
-        private var prfAlgorithm = PRFAlgorithm.HMACSHA1 // Use HMACSHA1 to ensure data cross-compatibility with Android
-        private var macAlgorithm = MACAlgorithm.HMACSHA256
+        public var algorithm = EncryptionAlgorithm.AES256
+        public var blockCipherMode = BlockCipherMode.CBC
+        public var padding = Padding.PKCS7
+        public var saltLength = 16
+        public var hmacSaltLength = 16
+        public var hmacKeyLength = 16
+        public var keyDerivationIterations = 10000
+        public var prfAlgorithm = PRFAlgorithm.HMACSHA1 // Use HMACSHA1 to ensure data cross-compatibility with Android
+        public var macAlgorithm = MACAlgorithm.HMACSHA256
         
-        public func setAlgorithm(algorithm: EncryptionAlgorithm) -> Spec {
+        open func setAlgorithm(_ algorithm: EncryptionAlgorithm) -> Spec {
             self.algorithm = algorithm
             return self
         }
         
-        public func setBlockCipherMode(mode: BlockCipherMode) -> Spec {
+        open func setBlockCipherMode(_ mode: BlockCipherMode) -> Spec {
             self.blockCipherMode = mode
             return self
         }
         
-        public func setPadding(padding: Padding) -> Spec {
+        open func setPadding(_ padding: Padding) -> Spec {
             self.padding = padding
             return self
         }
         
-        public func setSaltLength(length: Int) -> Spec {
+        open func setSaltLength(_ length: Int) -> Spec {
             self.saltLength = length
             return self
         }
         
-        public func setHMACSaltLength(length: Int) -> Spec {
+        open func setHMACSaltLength(_ length: Int) -> Spec {
             self.hmacSaltLength = length
             return self
         }
         
-        public func setHMACKeyLength(length: Int) -> Spec {
+        open func setHMACKeyLength(_ length: Int) -> Spec {
             self.hmacKeyLength = length
             return self
         }
         
-        public func setKeyDerivationIterations(iterations: Int) -> Spec {
+        open func setKeyDerivationIterations(_ iterations: Int) -> Spec {
             self.keyDerivationIterations = iterations
             return self
         }
         
-        public func setPRFAlgorithm(algorithm: PRFAlgorithm) -> Spec {
+        open func setPRFAlgorithm(_ algorithm: PRFAlgorithm) -> Spec {
             self.prfAlgorithm = algorithm
             return self
         }
         
-        public func setMACAlgorithm(algorithm: MACAlgorithm) -> Spec {
+        open func setMACAlgorithm(_ algorithm: MACAlgorithm) -> Spec {
             self.macAlgorithm = algorithm
             return self
         }
     }
     
-    public static func encrypt(data: NSData, password: String, spec: Spec = Spec()) -> NSData? {
-        let salt = generateSecureRandomData(spec.saltLength)!
-        let key = PBKDF2(password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm)!
-        let iv = generateSecureRandomData(spec.algorithm.blockSize)!
-        let encryptedData = encrypt(data, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)!
+    public static func encrypt(data: Data, password: String, spec: Spec = Spec()) -> Data? {
+        let salt = generateSecureRandomData(length: spec.saltLength)!
+        let key = PBKDF2(password: password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm)!
+        let iv = generateSecureRandomData(length: spec.algorithm.blockSize)!
+        let encryptedData = encrypt(data: data, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)!
         
-        let hmacSalt = generateSecureRandomData(spec.hmacSaltLength)!
-        let hmacKey = PBKDF2(password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm)!
-        let hmac = HMAC(hmacKey, message: encryptedData, algorithm: spec.macAlgorithm)!
+        let hmacSalt = generateSecureRandomData(length: spec.hmacSaltLength)!
+        let hmacKey = PBKDF2(password: password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm)!
+        let hmac = HMAC(key: hmacKey, message: encryptedData, algorithm: spec.macAlgorithm)!
         
         // TODO: Consider adding versioning in case of change in format later
-        let message = NSMutableData()
-        message.appendData(salt)
-        message.appendData(hmacSalt)
-        message.appendData(iv)
-        message.appendData(encryptedData)
-        message.appendData(hmac)
+        var message = Data()
+        message.append(salt)
+        message.append(hmacSalt)
+        message.append(iv)
+        message.append(encryptedData)
+        message.append(hmac)
         
         return message
     }
     
-    public static func decrypt(encryptedMessage: NSData, password: String, spec: Spec = Spec()) -> NSData? {
-        let data = NSMutableData(data: encryptedMessage)
+    public static func decrypt(encryptedMessage: Data, password: String, spec: Spec = Spec()) -> Data? {
+        let data = Data(encryptedMessage)
         
         let ivLength = spec.algorithm.blockSize
         let hmacLength = spec.macAlgorithm.macLength
-        let encryptedDataLength = encryptedMessage.length - spec.saltLength - spec.hmacSaltLength - ivLength - hmacLength
+        let encryptedDataLength = encryptedMessage.count - spec.saltLength - spec.hmacSaltLength - ivLength - hmacLength
         
         let saltLocation = 0
         let hmacSaltLocation = saltLocation + spec.saltLength
@@ -121,48 +121,43 @@ public struct Crypto {
         let encryptedDataLocation = ivLocation + ivLength
         let hmacLocation = encryptedDataLocation + encryptedDataLength
         
-        guard encryptedDataLength > 0 && hmacLocation + hmacLength == encryptedMessage.length else {
+        guard encryptedDataLength > 0 && hmacLocation + hmacLength == encryptedMessage.count else {
             return nil
         }
         
-        let salt = NSMutableData(length: spec.saltLength)!
-        data.getBytes(UnsafeMutablePointer<Void>(salt.mutableBytes), range: NSRange(location: saltLocation, length: spec.saltLength))
+        let salt = data.subdata(in: saltLocation..<saltLocation + spec.saltLength)
+        let hmacSalt = data.subdata(in: hmacSaltLocation..<hmacSaltLocation + spec.hmacSaltLength)
+        let iv = data.subdata(in: ivLocation..<ivLocation + ivLength)
         
-        let hmacSalt = NSMutableData(length: spec.hmacSaltLength)!
-        data.getBytes(UnsafeMutablePointer<Void>(hmacSalt.mutableBytes), range: NSRange(location: hmacSaltLocation, length: spec.hmacSaltLength))
+        let hmac = data.subdata(in: hmacLocation..<hmacLocation + hmacLength)
         
-        let iv = NSMutableData(length: ivLength)!
-        data.getBytes(UnsafeMutablePointer<Void>(iv.mutableBytes), range: NSRange(location: ivLocation, length: ivLength))
+        let encryptedData = data.subdata(in: encryptedDataLocation..<encryptedDataLocation + encryptedDataLength)
         
-        let hmac = NSMutableData(length: hmacLength)!
-        data.getBytes(UnsafeMutablePointer<Void>(hmac.mutableBytes), range: NSRange(location: hmacLocation, length: hmacLength))
+        let hmacKey = PBKDF2(password: password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm)!
         
-        let encryptedData = NSMutableData(length: encryptedDataLength)!
-        data.getBytes(UnsafeMutablePointer<Void>(encryptedData.mutableBytes), range: NSRange(location: encryptedDataLocation, length: encryptedDataLength))
-        
-        let hmacKey = PBKDF2(password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm)!
-        guard HMAC(hmacKey, message: encryptedData, algorithm: spec.macAlgorithm) == hmac else {
+        guard HMAC(key: hmacKey, message: encryptedData, algorithm: spec.macAlgorithm) == hmac else {
             return nil
         }
         
-        let key = PBKDF2(password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm)!
+        let key = PBKDF2(password: password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm)!
         
-        return decrypt(encryptedData, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)
+        return decrypt(data: encryptedData, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)
     }
+
     
     
     // Encryption / Decryption
     // ********************************************************************************
     
-    public static func encrypt(data: NSData, key: NSData, iv: NSData? = nil, algorithm: EncryptionAlgorithm, blockCipherMode: BlockCipherMode = .CBC, padding: Padding = .PKCS7) -> NSData? {
-        return crypt(data, key: key, iv: iv, algorithm: algorithm, blockCipherMode: blockCipherMode, padding: padding, mode: .Encrypt)
+    public static func encrypt(data: Data, key: Data, iv: Data? = nil, algorithm: EncryptionAlgorithm, blockCipherMode: BlockCipherMode = .CBC, padding: Padding = .PKCS7) -> Data? {
+        return crypt(data: data, key: key, iv: iv, algorithm: algorithm, blockCipherMode: blockCipherMode, padding: padding, mode: .Encrypt)
     }
     
-    public static func decrypt(data: NSData, key: NSData, iv: NSData? = nil, algorithm: EncryptionAlgorithm, blockCipherMode: BlockCipherMode = .CBC, padding: Padding = .PKCS7) -> NSData? {
-        return crypt(data, key: key, iv: iv, algorithm: algorithm, blockCipherMode: blockCipherMode, padding: padding, mode: .Decrypt)
+    public static func decrypt(data: Data, key: Data, iv: Data? = nil, algorithm: EncryptionAlgorithm, blockCipherMode: BlockCipherMode = .CBC, padding: Padding = .PKCS7) -> Data? {
+        return crypt(data: data, key: key, iv: iv, algorithm: algorithm, blockCipherMode: blockCipherMode, padding: padding, mode: .Decrypt)
     }
     
-    private static func crypt(data: NSData, key: NSData, iv: NSData? = nil, algorithm: EncryptionAlgorithm, blockCipherMode: BlockCipherMode = .CBC, padding: Padding = .PKCS7, mode: CryptMode) -> NSData? {
+    private static func crypt(data: Data, key: Data, iv: Data? = nil, algorithm: EncryptionAlgorithm, blockCipherMode: BlockCipherMode = .CBC, padding: Padding = .PKCS7, mode: CryptMode) -> Data? {
         let operation: CCOperation = UInt32(mode == .Encrypt ? kCCEncrypt : kCCDecrypt)
         let cryptAlgorithm: CCAlgorithm = UInt32(algorithm.value)
         var opts: Int = 0
@@ -174,19 +169,19 @@ public struct Crypto {
         }
         let options: CCOptions = UInt32(opts)
         
-        let keyData = key
-        let keyBytes = UnsafeMutablePointer<Void>(keyData.bytes)
-        let keyLength = size_t(keyData.length)
+        var keyData = key
+        let keyBytes: UnsafeMutablePointer<Void> = keyData.withUnsafeMutableBytes { return $0 }
+        let keyLength = size_t(keyData.count)
         
-        let ivData = iv != nil ? iv! : NSMutableData(length: algorithm.blockSize)!
-        let ivPointer = UnsafeMutablePointer<Void>(ivData.bytes)
+        var ivData = iv != nil ? iv! : Data(count: algorithm.blockSize)
+        let ivPointer: UnsafeMutablePointer<Void> = ivData.withUnsafeMutableBytes { return $0 }
         
-        let dataBytes = UnsafeMutablePointer<Void>(data.bytes)
-        let dataLength = size_t(data.length)
+        var dataBytes: UnsafePointer<Void> = data.withUnsafeBytes { return $0 }
+        let dataLength = size_t(data.count)
         
-        let processedData = NSMutableData(length: Int(dataLength) + algorithm.blockSize)!
-        let cryptPointer = UnsafeMutablePointer<Void>(processedData.mutableBytes)
-        let cryptLength = size_t(processedData.length)
+        var processedData = Data(count: Int(dataLength) + algorithm.blockSize)
+        let cryptPointer: UnsafeMutablePointer<Void> = processedData.withUnsafeMutableBytes { return $0 }
+        let cryptLength = size_t(processedData.count)
         
         var numBytesProcessed: size_t = 0
         
@@ -205,8 +200,7 @@ public struct Crypto {
         )
         
         if Int(cryptStatus) == Int(kCCSuccess) {
-            processedData.length = Int(numBytesProcessed)
-            return processedData
+            return processedData.subdata(in: 0..<numBytesProcessed)
         } else {
             return nil
         }
@@ -215,36 +209,36 @@ public struct Crypto {
     // PKCS7
     // ********************************************************************************
     
-    public static func pkcs7(data: NSData, length: Int) -> NSData {
-        var padding = length - data.length
-        let paddedData = NSMutableData(data: data)
+    public static func pkcs7(data: Data, length: Int) -> Data {
+        var padding = length - data.count
+        let paddingData = Data(bytes: &padding, count: 1)
+        var paddedData = Data(data)
         
         if padding > 0 {
             for _ in 0...padding {
-                paddedData.appendBytes(&padding, length: 1)
+                paddedData.append(paddingData)
             }
         }
-        paddedData.length = length
         
-        return paddedData
+        return paddedData.subdata(in: 0..<length)
     }
     
     // HMAC
     // ********************************************************************************
     
-    public static func HMAC(key: NSData, message: NSData, algorithm: MACAlgorithm) -> NSData? {
+    public static func HMAC(key: Data, message: Data, algorithm: MACAlgorithm) -> Data? {
         let hmacAlgorithm = UInt32(algorithm.value)
         
         let keyData = key
-        let keyBytes = UnsafeMutablePointer<Void>(keyData.bytes)
-        let keyLength = size_t(keyData.length)
+        let keyBytes: UnsafePointer<Void> = keyData.withUnsafeBytes { return $0 }
+        let keyLength = size_t(keyData.count)
         
         let messageData = message
-        let messageBytes = UnsafeMutablePointer<Void>(messageData.bytes)
-        let messageLength = size_t(messageData.length)
+        let messageBytes: UnsafePointer<Void> = messageData.withUnsafeBytes { return $0 }
+        let messageLength = size_t(messageData.count)
         
-        let data = NSMutableData(length: algorithm.macLength)!
-        let mac = UnsafeMutablePointer<Void>(data.mutableBytes)
+        var data = Data(count: algorithm.macLength)
+        let mac : UnsafeMutablePointer<Void> = data.withUnsafeMutableBytes { return $0 }
         
         CCHmac(
             hmacAlgorithm, // algorithm
@@ -261,22 +255,22 @@ public struct Crypto {
     // PBKDF2
     // ********************************************************************************
     
-    public static func PBKDF2(password: String, salt: NSData, iterations: Int, length: Int, algorithm: PRFAlgorithm) -> NSData? {
+    public static func PBKDF2(password: String, salt: Data, iterations: Int, length: Int, algorithm: PRFAlgorithm) -> Data? {
         let pbkdfAlgorithm = UInt32(kCCPBKDF2)
         let passwordData = password.utf8EncodedData!
-        let passwordBytes = UnsafeMutablePointer<Int8>(passwordData.bytes)
-        let passwordLength = size_t(passwordData.length)
+        let passwordBytes: UnsafePointer<Int8> = passwordData.withUnsafeBytes { return $0 }
+        let passwordLength = size_t(passwordData.count)
         
-        let saltBytes = UnsafeMutablePointer<UInt8>(salt.bytes)
-        let saltLength = size_t(salt.length)
+        let saltBytes: UnsafePointer<UInt8> = salt.withUnsafeBytes { return $0 }
+        let saltLength = size_t(salt.count)
         
         let prfAlgorithm = UInt32(algorithm.value)
         
         let rounds = UInt32(iterations)
         
-        let key = NSMutableData(length: length)!
-        let keyBytes = UnsafeMutablePointer<UInt8>(key.bytes)
-        let keyLength = size_t(key.length)
+        var key = Data(count: length)
+        let keyBytes: UnsafeMutablePointer<UInt8> = key.withUnsafeMutableBytes { return $0 }
+        let keyLength = size_t(key.count)
         
         let result = CCKeyDerivationPBKDF(
             pbkdfAlgorithm, // password-based key derivation algorithm
@@ -300,34 +294,36 @@ public struct Crypto {
     // Hash
     // ********************************************************************************
     
-    public static func SHA1(text: String) -> String {
-        return SHA1(text.dataUsingEncoding(NSUTF8StringEncoding)!)
+    public static func SHA1(_ text: String) -> String {
+        return SHA1(text.data(using: String.Encoding.utf8)!)
     }
     
-    public static func SHA1(data: NSData) -> String {
-        var digest = [UInt8](count: Int(CC_SHA1_DIGEST_LENGTH), repeatedValue: 0)
-        CC_SHA1(data.bytes, CC_LONG(data.length), &digest)
+    public static func SHA1(_ data: Data) -> String {
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+        CC_SHA1((data as NSData).bytes, CC_LONG(data.count), &digest)
         let hexBytes = digest.map { String(format: "%02hhx", $0) }
-        return hexBytes.joinWithSeparator("")
+        return hexBytes.joined(separator: "")
     }
     
-    public static func MD5(text: String) -> String {
-        return MD5(text.dataUsingEncoding(NSUTF8StringEncoding)!)
+    public static func MD5(_ text: String) -> String {
+        return MD5(text.data(using: String.Encoding.utf8)!)
     }
     
-    public static func MD5(data: NSData) -> String {
-        var digest = [UInt8](count: Int(CC_MD5_DIGEST_LENGTH), repeatedValue: 0)
-        CC_MD5(data.bytes, CC_LONG(data.length), &digest)
+    public static func MD5(_ data: Data) -> String {
+        var digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+        CC_MD5((data as NSData).bytes, CC_LONG(data.count), &digest)
         let hexBytes = digest.map { String(format: "%02hhx", $0) }
-        return hexBytes.joinWithSeparator("")
+        return hexBytes.joined(separator: "")
     }
     
     // Utilities
     // ********************************************************************************
     
-    public static func generateSecureRandomData(length: Int) -> NSData? {
-        let data = NSMutableData(length: Int(length))!
-        let result = SecRandomCopyBytes(kSecRandomDefault, length, UnsafeMutablePointer<UInt8>(data.mutableBytes))
+    public static func generateSecureRandomData(length: Int) -> Data? {
+        var data = Data(count: length)
+        let result = data.withUnsafeMutableBytes {
+            return SecRandomCopyBytes(kSecRandomDefault, length, $0)
+        }
         if result == 0 {
             return data
         } else {

@@ -26,9 +26,9 @@ import Foundation
 
 public struct Random {
     
-    private init() {}
+    fileprivate init() {}
     
-    public static func randomInt(min min: Int, max: Int) -> Int {
+    public static func randomInt(min: Int, max: Int) -> Int {
         var lower = min
         var upper = max
         var adj = 0
@@ -40,7 +40,7 @@ public struct Random {
         return lower + Int(arc4random_uniform(UInt32(upper - lower + 1))) - adj
     }
     
-    public static func randomInt(range: Range<Int>) -> Int {
-        return randomInt(min: range.startIndex, max: range.endIndex)
+    public static func randomInt(_ range: Range<Int>) -> Int {
+        return randomInt(min: range.lowerBound, max: range.upperBound)
     }
 }

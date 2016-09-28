@@ -30,15 +30,15 @@ public struct SystemUtil {
     }
     
     public static var isPad: Bool {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad
+        return UIDevice.current.userInterfaceIdiom == .pad
     }
     
     public static var isPhone: Bool {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Phone
+        return UIDevice.current.userInterfaceIdiom == .phone
     }
     
     @available(iOS 9.0, *)
     public static var isTV: Bool {
-        return UIDevice.currentDevice().userInterfaceIdiom == .TV
+        return UIDevice.current.userInterfaceIdiom == .tv
     }
 }

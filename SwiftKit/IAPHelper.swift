@@ -25,51 +25,51 @@
 import Foundation
 import StoreKit
 
-public typealias GetProductsHandler = (products: [SKProduct], error: NSError?) -> ()
+public typealias GetProductsHandler = (_ products: [SKProduct], _ error: NSError?) -> ()
 
-public class IAPHelper: NSObject {
-    private let productIdentifiers: Set<String>
-    private let handler: IAPHandler
+open class IAPHelper: NSObject {
+    fileprivate let productIdentifiers: Set<String>
+    fileprivate let handler: IAPHandler
     
-    private var restoredProductIdentifiers: [String] = []
+    fileprivate var restoredProductIdentifiers: [String] = []
     
     public init(productIdentifiers: Set<String>, handler: IAPHandler) {
         self.productIdentifiers = productIdentifiers
         self.handler = handler
         super.init()
-        SKPaymentQueue.defaultQueue().addTransactionObserver(self)
+        SKPaymentQueue.default().add(self)
     }
     
     deinit {
-        SKPaymentQueue.defaultQueue().removeTransactionObserver(self)
+        SKPaymentQueue.default().remove(self)
         print("Removed self as transaction observer")
     }
     
-    public func requestProducts() {
+    open func requestProducts() {
         print("requestProducts")
         let request = SKProductsRequest(productIdentifiers: productIdentifiers)
         request.delegate = self
         request.start()
     }
     
-    public func purchaseProduct(product: SKProduct) {
+    open func purchaseProduct(_ product: SKProduct) {
         print("purchaseProduct \(product.productIdentifier)...")
         
         let payment = SKPayment(product: product)
-        SKPaymentQueue.defaultQueue().addPayment(payment)
+        SKPaymentQueue.default().add(payment)
     }
     
-    public func restoreCompletedTransactions() {
-        SKPaymentQueue.defaultQueue().restoreCompletedTransactions()
+    open func restoreCompletedTransactions() {
+        SKPaymentQueue.default().restoreCompletedTransactions()
     }
     
-    public static func canMakePayments() -> Bool {
+    open static func canMakePayments() -> Bool {
         return SKPaymentQueue.canMakePayments()
     }
 }
 
 extension IAPHelper: SKProductsRequestDelegate {
-    public func productsRequest(request: SKProductsRequest, didReceiveResponse response: SKProductsResponse) {
+    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         print("Products request successful")
         let products = response.products
         handler.receivedProducts(products, error: nil)
@@ -79,63 +79,63 @@ extension IAPHelper: SKProductsRequestDelegate {
         }
     }
     
-    public func request(request: SKRequest, didFailWithError error: NSError) {
+    public func request(_ request: SKRequest, didFailWithError error: Error) {
         print("Products request failed: \(error)")
-        handler.receivedProducts(nil, error: error)
+        handler.receivedProducts(nil, error: error as NSError?)
     }
 }
 
 extension IAPHelper: SKPaymentTransactionObserver {
-    public func paymentQueue(queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         for transaction in transactions {
             switch (transaction.transactionState) {
-            case .Purchasing:
+            case .purchasing:
                 print("Purchasing")
                 handler.purchasing(transaction.payment.productIdentifier)
                 break
-            case .Deferred:
+            case .deferred:
                 print("Deferred")
                 handler.deferred(transaction.payment.productIdentifier)
                 break
-            case .Purchased:
+            case .purchased:
                 print("Purchased")
                 handler.purchased(transaction.payment.productIdentifier)
                 queue.finishTransaction(transaction)
                 break
-            case .Failed:
+            case .failed:
                 print("Failed")
-                handler.failed(transaction.payment.productIdentifier, withError: transaction.error!)
+                handler.failed(transaction.payment.productIdentifier, withError: transaction.error! as NSError)
                 queue.finishTransaction(transaction)
                 break
-            case .Restored:
+            case .restored:
                 print("Restored")
-                restoredProductIdentifiers.append(transaction.originalTransaction!.payment.productIdentifier)
+                restoredProductIdentifiers.append(transaction.original!.payment.productIdentifier)
                 queue.finishTransaction(transaction)
                 break
             }
         }
     }
     
-    public func paymentQueueRestoreCompletedTransactionsFinished(queue: SKPaymentQueue) {
+    public func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         print("Restore finished: \(restoredProductIdentifiers)")
         handler.restored(restoredProductIdentifiers, error: nil)
         restoredProductIdentifiers.removeAll()
     }
     
-    public func paymentQueue(queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: NSError) {
+    public func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
         print("Restore failed")
-        handler.restored(nil, error: error)
+        handler.restored(nil, error: error as NSError?)
         restoredProductIdentifiers.removeAll()
     }
 }
 
 public protocol IAPHandler {
-    func purchasing(productIdentifier: String) -> ()
-    func deferred(productIdentifier: String) -> ()
-    func purchased(productIdentifier: String) -> ()
-    func failed(productIdentifier: String, withError error: NSError) -> ()
+    func purchasing(_ productIdentifier: String) -> ()
+    func deferred(_ productIdentifier: String) -> ()
+    func purchased(_ productIdentifier: String) -> ()
+    func failed(_ productIdentifier: String, withError error: NSError) -> ()
     
-    func restored(productIdentifiers: [String]?, error: NSError?) -> ()
+    func restored(_ productIdentifiers: [String]?, error: NSError?) -> ()
     
-    func receivedProducts(products: [SKProduct]?, error: NSError?) -> ()
+    func receivedProducts(_ products: [SKProduct]?, error: NSError?) -> ()
 }

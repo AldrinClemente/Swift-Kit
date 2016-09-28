@@ -25,18 +25,18 @@
 import Foundation
 
 public struct Async {
-    public static func runOnBackgroundThread(task: Task, completion: Task? = nil) {
+    public static func runOnBackgroundThread(_ task: @escaping Task, completion: Task? = nil) {
         runOnBackgroundThread(0, task: task, completion: completion)
     }
     
-    public static func runOnBackgroundThread(delay: Double = 0.0, task: Task? = nil, completion: Task? = nil) {
-        let backgroundTaskDelay = dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
-        dispatch_after(backgroundTaskDelay, dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) {
+    public static func runOnBackgroundThread(_ delay: Double = 0.0, task: Task? = nil, completion: Task? = nil) {
+        let backgroundTaskDelay = DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated).asyncAfter(deadline: backgroundTaskDelay) {
             task?()
             
             if completion != nil {
-                let completionTaskDelay = dispatch_time(DISPATCH_TIME_NOW, 0)
-                dispatch_after(completionTaskDelay, dispatch_get_main_queue()) {
+                let completionTaskDelay = DispatchTime.now() + Double(0) / Double(NSEC_PER_SEC)
+                DispatchQueue.main.asyncAfter(deadline: completionTaskDelay) {
                     completion?()
                 }
             }

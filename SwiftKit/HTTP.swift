@@ -24,25 +24,25 @@
 
 import Foundation
 
-public typealias ResponseHandler = (response: Response) -> Void
+public typealias ResponseHandler = (_ response: Response) -> Void
 
 public struct HTTP {
-    private static let sessionDelegate = SessionDelegate()
-    private static let session: NSURLSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: sessionDelegate, delegateQueue: NSOperationQueue.mainQueue())
+    fileprivate static let sessionDelegate = SessionDelegate()
+    fileprivate static let session: URLSession = URLSession(configuration: URLSessionConfiguration.default, delegate: sessionDelegate, delegateQueue: OperationQueue.main)
     
-    public static func request(method: Method, url: String, queryParameters: [String : AnyObject] = [:]) -> Request {
+    public static func request(_ method: Method, url: String, queryParameters: [String : AnyObject] = [:]) -> Request {
         return Request(session: session, method: method, url: url, queryParameters: queryParameters)
     }
     
-    public static func request(url: String, queryParameters: [String : AnyObject] = [:]) -> Request {
+    public static func request(_ url: String, queryParameters: [String : AnyObject] = [:]) -> Request {
         return request(.GET, url: url, queryParameters:  queryParameters)
     }
     
-    public static func setDefaultRequestTimeout(seconds: NSTimeInterval) {
+    public static func setDefaultRequestTimeout(_ seconds: TimeInterval) {
         session.configuration.timeoutIntervalForRequest = seconds
     }
     
-    public static func addTrustedHost(host: String) {
+    public static func addTrustedHost(_ host: String) {
         sessionDelegate.addTrustedHost(host)
     }
     
@@ -63,8 +63,8 @@ class SessionDelegate: NSObject {
     var trustAll: Bool = false
     var trustedHosts: Set<String> = []
     
-    func addTrustedHost(host: String...) {
-        trustedHosts.unionInPlace(host)
+    func addTrustedHost(_ host: String...) {
+        trustedHosts.formUnion(host)
     }
     
     func trustAllHosts() {
@@ -72,8 +72,8 @@ class SessionDelegate: NSObject {
     }
 }
 
-extension SessionDelegate: NSURLSessionTaskDelegate {
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+extension SessionDelegate: URLSessionTaskDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         print("Authentication challenge received")
         print("Host: \(challenge.protectionSpace.host)")
         print("Authentication method: \(challenge.protectionSpace.authenticationMethod)")
@@ -81,10 +81,10 @@ extension SessionDelegate: NSURLSessionTaskDelegate {
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust
             && (trustAll || trustedHosts.contains(challenge.protectionSpace.host) || task.checkAndConsumeTrust()) {
                 print("Host is set as trusted!")
-                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!))
+                completionHandler(Foundation.URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust: challenge.protectionSpace.serverTrust!))
         } else {
             print("Host is not set as trusted, performing default handling...")
-            completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, nil)
+            completionHandler(Foundation.URLSession.AuthChallengeDisposition.performDefaultHandling, nil)
         }
     }
 }
