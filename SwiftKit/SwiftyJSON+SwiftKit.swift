@@ -47,6 +47,6 @@ extension JSON {
     }
     
     public init() {
-        self.init("{}")
+        self.init([:])
     }
 }
