@@ -18,6 +18,7 @@
 		7F4BBBA71C4CAD34003D3CD2 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4BBBA61C4CAD34003D3CD2 /* Crypto.swift */; };
 		7F4BBBBA1C4DF59D003D3CD2 /* String+SwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4BBBB91C4DF59D003D3CD2 /* String+SwiftKit.swift */; };
 		7F5702861CE1602C00E00431 /* Dictionary+SwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F5702851CE1602C00E00431 /* Dictionary+SwiftKit.swift */; };
+		7F61FC491E123CE600769D1C /* CommonCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F61FC481E123CE600769D1C /* CommonCrypto.h */; };
 		7F7219D81CAE4D87003DBFBF /* SecureVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7219D71CAE4D87003DBFBF /* SecureVar.swift */; };
 		7F79E5211C4B1D7800406DD2 /* SwiftKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F79E5201C4B1D7800406DD2 /* SwiftKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7F79E5281C4B1D7800406DD2 /* SwiftKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F79E51D1C4B1D7800406DD2 /* SwiftKit.framework */; };
@@ -82,6 +83,7 @@
 		7F4BBBA61C4CAD34003D3CD2 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		7F4BBBB91C4DF59D003D3CD2 /* String+SwiftKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+SwiftKit.swift"; sourceTree = "<group>"; };
 		7F5702851CE1602C00E00431 /* Dictionary+SwiftKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+SwiftKit.swift"; sourceTree = "<group>"; };
+		7F61FC481E123CE600769D1C /* CommonCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCrypto.h; sourceTree = "<group>"; };
 		7F7219D71CAE4D87003DBFBF /* SecureVar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureVar.swift; sourceTree = "<group>"; };
 		7F79E51D1C4B1D7800406DD2 /* SwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F79E5201C4B1D7800406DD2 /* SwiftKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftKit.h; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		7F4BBB841C4CA7EE003D3CD2 /* CommonCrypto */ = {
 			isa = PBXGroup;
 			children = (
+				7F61FC481E123CE600769D1C /* CommonCrypto.h */,
 				7F4BBB871C4CA7EE003D3CD2 /* Info.plist */,
 				7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */,
 				7F4BBB9B1C4CA8CE003D3CD2 /* iphoneos.modulemap */,
@@ -323,6 +326,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F61FC491E123CE600769D1C /* CommonCrypto.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
