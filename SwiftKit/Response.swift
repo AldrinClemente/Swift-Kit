@@ -48,7 +48,7 @@ open class Response {
     public var rawError: URLError?
     var _data: Data?
     var httpResponse: HTTPURLResponse?
-    public var originalRequest: Request?
+    public var originalRequest: Request!
     public var string: String? {
         return _data != nil ? String(data: _data!, encoding: String.Encoding.utf8) : nil
     }

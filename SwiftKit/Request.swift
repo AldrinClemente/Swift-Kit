@@ -114,6 +114,7 @@ open class Request {
     
     open func setMockResponse(_ mockResponse: MockResponse) -> Self {
         self.mockResponse = mockResponse
+        self.mockResponse?.originalRequest = self
         return self
     }
     
