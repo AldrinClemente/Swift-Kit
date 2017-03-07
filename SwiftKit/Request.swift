@@ -35,6 +35,8 @@ open class Request {
     
     var bodyProvider: (() -> Data)?
     
+    var mockResponse: MockResponse?
+    
     static var requestQueue: [Request] = []
     static var pendingRequest: Request?
     
@@ -110,6 +112,11 @@ open class Request {
         return self
     }
     
+    open func setMockResponse(_ mockResponse: MockResponse) -> Self {
+        self.mockResponse = mockResponse
+        return self
+    }
+    
     open func setLogTag(_ tag: String) -> Self {
         self.logTag = tag
         return self
@@ -133,6 +140,7 @@ open class Request {
         task = session.dataTask(with: request, completionHandler: handleResponse)
         if isTrustedHost {
             task.trustHost()
+            print("\(logTag!) SSL Verification Disabled **********")
         }
         if logTag != nil {
             print("\(logTag!) Endpoint: \(request.url!.absoluteString)")
@@ -145,7 +153,13 @@ open class Request {
                 print("\(logTag!) Request Body: nil")
             }
         }
-        task.resume()
+        if (mockResponse == nil) {
+            task.resume()
+        } else {
+            Async.runOnBackgroundThread(1, task: nil) {
+                self.handleResponse(response: self.mockResponse)
+            }
+        }
         return self
     }
     
@@ -168,19 +182,23 @@ open class Request {
     
     fileprivate func handleResponse(_ data: Data?, response: URLResponse?, error: Error?) {
         self.response = Response(originalRequest: self, data: data, httpResponse: response as? HTTPURLResponse, error: error)
+        handleResponse(response: self.response)
+    }
+    
+    private func handleResponse(response: Response?) {
         if logTag != nil {
-            if let statusMessage = self.response!.statusMessage {
+            if let statusMessage = response!.statusMessage {
                 print("\(logTag!) Response Message: \(statusMessage)")
             } else {
                 print("\(logTag!) Response Message: nil")
             }
-            if let content = self.response!.data?.utf8EncodedString {
+            if let content = response!.data?.utf8EncodedString {
                 print("\(logTag!) Response Content: \(content)")
             } else {
                 print("\(logTag!) Response Content: nil")
             }
         }
-        responseHandler?(self.response!)
+        responseHandler?(response!)
         if let pendingRequest = Request.pendingRequest {
             if pendingRequest === self {
                 Request.pendingRequest = nil

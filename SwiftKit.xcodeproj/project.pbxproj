@@ -37,6 +37,7 @@
 		7FB714C81C7B718800AB9E3C /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB714C71C7B718800AB9E3C /* Toast.swift */; };
 		7FE5C1A91D9B8DDA00DA2253 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE5C1A81D9B8DDA00DA2253 /* SwiftyJSON.swift */; };
 		7FE5C1AB1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE5C1AA1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift */; };
+		7FE6BD4E1E6E73DF00A00338 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE6BD4D1E6E73DF00A00338 /* MockResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,7 @@
 		7FB714C71C7B718800AB9E3C /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		7FE5C1A81D9B8DDA00DA2253 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		7FE5C1AA1D9B8E5100DA2253 /* SwiftyJSON+SwiftKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftyJSON+SwiftKit.swift"; sourceTree = "<group>"; };
+		7FE6BD4D1E6E73DF00A00338 /* MockResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +274,7 @@
 				7F79E5431C4B1E4E00406DD2 /* HTTP.swift */,
 				7F79E5441C4B1E4E00406DD2 /* Request.swift */,
 				7F79E5451C4B1E4E00406DD2 /* Response.swift */,
+				7FE6BD4D1E6E73DF00A00338 /* MockResponse.swift */,
 			);
 			name = HTTP;
 			sourceTree = "<group>";
@@ -515,6 +518,7 @@
 				7F40F8291C67075B002D256C /* UIColor+SwiftKit.swift in Sources */,
 				7F40F82C1C672D1D002D256C /* Random.swift in Sources */,
 				7FA3971D1C94F4CA00F938CF /* Label.swift in Sources */,
+				7FE6BD4E1E6E73DF00A00338 /* MockResponse.swift in Sources */,
 				7FA2AE601C7F025D00652FDF /* Timer.swift in Sources */,
 				7FA2AE5D1C7EE74100652FDF /* System.swift in Sources */,
 				7F79E5461C4B1E4E00406DD2 /* HTTP.swift in Sources */,
