@@ -60,7 +60,7 @@ extension GameKitHelper {
                 completion: nil)
         }
         if error != nil {
-            print(error?.localizedDescription)
+            print(error?.localizedDescription as Any)
         }
     }
 }

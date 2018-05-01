@@ -23,7 +23,6 @@
 //
 
 import Foundation
-import CommonCrypto
 
 public struct Crypto {
     
@@ -88,14 +87,27 @@ public struct Crypto {
     }
     
     public static func encrypt(data: Data, password: String, spec: Spec = Spec()) -> Data? {
-        let salt = generateSecureRandomData(length: spec.saltLength)!
-        let key = PBKDF2(password: password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm)!
-        let iv = generateSecureRandomData(length: spec.algorithm.blockSize)!
-        let encryptedData = encrypt(data: data, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)!
-        
-        let hmacSalt = generateSecureRandomData(length: spec.hmacSaltLength)!
-        let hmacKey = PBKDF2(password: password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm)!
-        let hmac = HMAC(key: hmacKey, message: encryptedData, algorithm: spec.macAlgorithm)!
+        guard let salt = generateSecureRandomData(length: spec.saltLength) else {
+            return nil
+        }
+        guard let key = PBKDF2(password: password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm) else {
+            return nil
+        }
+        guard let iv = generateSecureRandomData(length: spec.algorithm.blockSize) else {
+            return nil
+        }
+        guard let encryptedData = encrypt(data: data, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding) else {
+            return nil
+        }
+        guard let hmacSalt = generateSecureRandomData(length: spec.hmacSaltLength) else {
+            return nil
+        }
+        guard let hmacKey = PBKDF2(password: password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm) else {
+            return nil
+        }
+        guard let hmac = HMAC(key: hmacKey, message: encryptedData, algorithm: spec.macAlgorithm) else {
+            return nil
+        }
         
         // TODO: Consider adding versioning in case of change in format later
         var message = Data()
@@ -170,17 +182,17 @@ public struct Crypto {
         let options: CCOptions = UInt32(opts)
         
         var keyData = key
-        let keyBytes: UnsafeMutablePointer<Void> = keyData.withUnsafeMutableBytes { return $0 }
+        let keyBytes = keyData.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<UInt8>) -> UnsafeMutablePointer<UInt8> in return bytes }
         let keyLength = size_t(keyData.count)
         
-        var ivData = iv != nil ? iv! : Data(count: algorithm.blockSize)
-        let ivPointer: UnsafeMutablePointer<Void> = ivData.withUnsafeMutableBytes { return $0 }
+        var ivData = (iv != nil) ? iv! : Data(count: algorithm.blockSize)
+        let ivPointer = ivData.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<UInt8>) -> UnsafeMutablePointer<UInt8> in return bytes }
         
-        var dataBytes: UnsafePointer<Void> = data.withUnsafeBytes { return $0 }
+        let dataBytes = data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> UnsafePointer<UInt8> in return bytes }
         let dataLength = size_t(data.count)
         
         var processedData = Data(count: Int(dataLength) + algorithm.blockSize)
-        let cryptPointer: UnsafeMutablePointer<Void> = processedData.withUnsafeMutableBytes { return $0 }
+        let cryptPointer =  processedData.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<UInt8>) -> UnsafeMutablePointer<UInt8> in return bytes }
         let cryptLength = size_t(processedData.count)
         
         var numBytesProcessed: size_t = 0
@@ -230,15 +242,15 @@ public struct Crypto {
         let hmacAlgorithm = UInt32(algorithm.value)
         
         let keyData = key
-        let keyBytes: UnsafePointer<Void> = keyData.withUnsafeBytes { return $0 }
+        let keyBytes = keyData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> UnsafePointer<UInt8> in return bytes }
         let keyLength = size_t(keyData.count)
         
         let messageData = message
-        let messageBytes: UnsafePointer<Void> = messageData.withUnsafeBytes { return $0 }
+        let messageBytes = messageData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> UnsafePointer<UInt8> in return bytes }
         let messageLength = size_t(messageData.count)
         
         var data = Data(count: algorithm.macLength)
-        let mac : UnsafeMutablePointer<Void> = data.withUnsafeMutableBytes { return $0 }
+        let mac = data.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<UInt8>) -> UnsafeMutablePointer<UInt8> in return bytes }
         
         CCHmac(
             hmacAlgorithm, // algorithm
@@ -295,7 +307,10 @@ public struct Crypto {
     // ********************************************************************************
     
     public static func SHA1(_ text: String) -> String {
-        return SHA1(text.data(using: String.Encoding.utf8)!)
+        guard let data = text.data(using: String.Encoding.utf8) else {
+            return ""
+        }
+        return SHA1(data)
     }
     
     public static func SHA1(_ data: Data) -> String {
@@ -306,7 +321,10 @@ public struct Crypto {
     }
     
     public static func MD5(_ text: String) -> String {
-        return MD5(text.data(using: String.Encoding.utf8)!)
+        guard let data = text.data(using: String.Encoding.utf8) else {
+            return ""
+        }
+        return MD5(data)
     }
     
     public static func MD5(_ data: Data) -> String {

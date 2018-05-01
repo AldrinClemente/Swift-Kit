@@ -23,6 +23,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RNCryptor.h"
 
 //! Project version number for SwiftKit.
 FOUNDATION_EXPORT double SwiftKitVersionNumber;

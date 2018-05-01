@@ -81,10 +81,10 @@ open class SecureData {
     }
     
     open func put(_ key: String, value: Int) {
-        print(j[key].int)
+        print(j[key].int as Any)
         print("setting value to \(value)")
         j[key].set(value)
-        print(j[key].int)
+        print(j[key].int as Any)
     }
     
     open func put(_ key: String, value: Double) {
