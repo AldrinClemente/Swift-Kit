@@ -32,7 +32,7 @@ import UIKit
     @IBInspectable open var rightInset: CGFloat = 0
     
     open override func drawText(in rect: CGRect) {
-        super.drawText(in: UIEdgeInsetsInsetRect(rect, UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)))
+        super.drawText(in: rect.inset(by: UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)))
     }
     
     override open var intrinsicContentSize : CGSize {

@@ -25,35 +25,44 @@
 import Foundation
 
 public extension Data {
-    public func encrypt(_ password: String, spec: Crypto.Spec? = Crypto.Spec()) -> Data? {
-        return Crypto.encrypt(data: self, password: password, spec: spec!)
+    func encrypt(_ password: String, spec: Crypto.Spec? = Crypto.Spec()) -> Data? {
+        guard let spc = spec else {
+            return nil
+        }
+        return Crypto.encrypt(data: self, password: password, spec: spc)
     }
     
-    public func decrypt(_ password: String, spec: Crypto.Spec? = Crypto.Spec()) -> Data? {
-        return Crypto.decrypt(encryptedMessage: self, password: password, spec: spec!)
+    func decrypt(_ password: String, spec: Crypto.Spec? = Crypto.Spec()) -> Data? {
+        guard let spc = spec else {
+            return nil
+        }
+        return Crypto.decrypt(encryptedMessage: self, password: password, spec: spc)
     }
     
-    public var base64EncodedData: Data {
+    var base64EncodedData: Data {
         return self.base64EncodedData(options: .lineLength64Characters)
     }
     
-    public var base64EncodedString: String {
+    var base64EncodedString: String {
         return self.base64EncodedString(options: .lineLength64Characters)
     }
     
-    public var base64DecodedData: Data? {
+    var base64DecodedData: Data? {
         return Data(base64Encoded: self, options: .ignoreUnknownCharacters)
     }
     
-    public var base64DecodedString: String? {
-        return base64DecodedData != nil ? String(data: base64DecodedData!, encoding: String.Encoding.utf8) : nil
+    var base64DecodedString: String? {
+        guard let decodedData = base64DecodedData else {
+            return nil
+        }
+        return String(data: decodedData, encoding: String.Encoding.utf8)
     }
     
-    public var utf8EncodedString: String? {
+    var utf8EncodedString: String? {
         return String(data: self, encoding: String.Encoding.utf8)
     }
     
-    public var hexString: String? {
+    var hexString: String? {
         let buffer = (self as NSData).bytes.bindMemory(to: UInt8.self, capacity: self.count)
         
         var hexadecimalString = ""
@@ -63,19 +72,19 @@ public extension Data {
         return hexadecimalString
     }
     
-    public var sha1: String {
+    var sha1: String {
         return Crypto.SHA1(self)
     }
     
-    public var md5: String {
+    var md5: String {
         return Crypto.MD5(self)
     }
 }
 
-
 public extension Data {
     mutating func appendString(_ string: String) {
-        let data = string.data(using: String.Encoding.utf8)
-        append(data!)
+        if let data = string.data(using: String.Encoding.utf8) {
+            append(data)
+        }
     }
 }

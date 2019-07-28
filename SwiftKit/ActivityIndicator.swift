@@ -29,17 +29,17 @@ open class ActivityIndicator {
     fileprivate static var indicatorContainer: UIView!
     fileprivate static var indicator: UIActivityIndicatorView!
     
-    open static func show(_ parentView: UIView? = nil) {
+    public static func show(_ parentView: UIView? = nil) {
         var view: UIView
-        if parentView != nil {
-            view = parentView!
+        if let pView = parentView {
+            view = pView
         } else if let rootView = UIApplication.shared.keyWindow?.subviews.last {
             view = rootView
             
             // Unlike Toast, we're only getting the top-most view when nothing is specified
             // because the user may want to anchor the indicator into an inner view
-            while view.superview != nil {
-                view = view.superview!
+            while let superView = view.superview {
+                view = superView
             }
         } else {
             return
@@ -49,7 +49,7 @@ open class ActivityIndicator {
             indicatorContainer = UIView()
             indicatorContainer.backgroundColor = UIColor(hex: 0x000000, alpha: 128)
             
-            indicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            indicator = UIActivityIndicatorView(style: .whiteLarge)
             indicatorContainer.addSubview(indicator)
             indicator.startAnimating()
             
@@ -59,30 +59,30 @@ open class ActivityIndicator {
         indicatorContainer.removeFromSuperview()
         indicatorContainer.frame = view.frame
         view.addSubview(indicatorContainer)
-        indicatorContainer.bringSubview(toFront: view)
+        indicatorContainer.bringSubviewToFront(view)
         indicator.center = view.center
         
         indicatorContainer.isHidden = false
         UIView.animate(withDuration: 0.25,
-            delay: 0,
-            options: UIViewAnimationOptions.allowUserInteraction,
-            animations: {
-                indicatorContainer.alpha = 1
-            },
-            completion: nil)
+                       delay: 0,
+                       options: UIView.AnimationOptions.allowUserInteraction,
+                       animations: {
+                        indicatorContainer.alpha = 1
+        },
+                       completion: nil)
     }
     
-    open static func hide() {
+    public static func hide() {
         if indicatorContainer != nil {
             UIView.animate(withDuration: 0.25,
-                delay: 0,
-                options: UIViewAnimationOptions.allowUserInteraction,
-                animations: {
-                    indicatorContainer.alpha = 0
-                }, completion: { completed in
-                    indicatorContainer.isHidden = true
-                    indicatorContainer.removeFromSuperview()
-                }
+                           delay: 0,
+                           options:UIView.AnimationOptions.allowUserInteraction,
+                           animations: {
+                            indicatorContainer.alpha = 0
+            }, completion: { completed in
+                indicatorContainer.isHidden = true
+                indicatorContainer.removeFromSuperview()
+            }
             )
         }
     }

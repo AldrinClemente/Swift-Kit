@@ -31,20 +31,21 @@ public extension Dictionary {
     // This percent escapes in compliance with RFC 3986
     // http://www.ietf.org/rfc/rfc3986.txt
     // :returns: String representation in the form of key1=value1&key2=value2 where the keys and values are percent escaped
-    public var stringFromQueryParameters: String {
+    var stringFromQueryParameters: String {
         return arrayFromQueryParameters.joined(separator: "&")
     }
     
-    public var stringFromSortedQueryParameters: String {
+    var stringFromSortedQueryParameters: String {
         var parameters = arrayFromQueryParameters
         parameters.sort()
         return parameters.joined(separator: "&")
     }
     
     var arrayFromQueryParameters: [String] {
-        return self.map { (k, v) -> String in
-            let key = String(describing: k).stringByAddingPercentEncodingForURLQuery!
-            let value = String(describing: v).stringByAddingPercentEncodingForURLQuery!
+        return self.map { (arg) -> String in
+            let (k, v) = arg
+            let key = String(describing: k).stringByAddingPercentEncodingForURLQuery ?? "nil"
+            let value = String(describing: v).stringByAddingPercentEncodingForURLQuery ?? "nil"
             return "\(key)=\(value)"
         }
     }

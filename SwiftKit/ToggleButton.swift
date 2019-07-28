@@ -60,7 +60,7 @@ public protocol ToggleButtonDelegate {
         self.addTarget(self, action: #selector(ToggleButton.didReceiveTouchUpInside(_:)), for: .touchUpInside)
     }
     
-    func didReceiveTouchUpInside(_ sender: ToggleButton) {
+    @objc func didReceiveTouchUpInside(_ sender: ToggleButton) {
         activated = !activated
         delegate?.toggleButton(self, didBecomeActive: activated)
     }

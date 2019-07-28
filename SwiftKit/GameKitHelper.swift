@@ -25,7 +25,6 @@
 import Foundation
 import GameKit
 
-
 public typealias LeaderboardScore = Int
 public typealias LeaderboardIdentifier = String
 public typealias ScoreSubmissionHandler = (_ authenticated: Bool, _ error: Error?) -> Void
@@ -39,7 +38,7 @@ public struct GameKitHelper {
     fileprivate static let GameKitHelperErrorDomain: String = "GameKitHelperErrorDomain"
     
     public static var player: GKLocalPlayer {
-        return GKLocalPlayer.localPlayer()
+        return GKLocalPlayer.local
     }
     
     fileprivate static let gameCenterControllerDelegate: GameCenterControllerDelegate = GameCenterControllerDelegate()
@@ -60,7 +59,7 @@ extension GameKitHelper {
                 completion: nil)
         }
         if error != nil {
-            print(error?.localizedDescription)
+            print(error?.localizedDescription as Any)
         }
     }
 }
@@ -110,7 +109,7 @@ extension GameKitHelper {
             if error != nil {
                 completionHandler(nil, error as NSError?)
             } else {
-                for savedGame in savedGames! {
+                for savedGame in (savedGames ?? [GKSavedGame]()) {
                     if savedGame.name == name {
                         completionHandler(savedGame, nil)
                         return
