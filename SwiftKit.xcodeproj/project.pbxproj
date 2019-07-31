@@ -68,15 +68,9 @@
 		7F40F8281C67075B002D256C /* UIColor+SwiftKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+SwiftKit.swift"; sourceTree = "<group>"; };
 		7F40F82B1C672D1D002D256C /* Random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
 		7F4BBB831C4CA7EE003D3CD2 /* CommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7F4BBB871C4CA7EE003D3CD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7F4BBB8C1C4CA7EF003D3CD2 /* CommonCryptoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CommonCryptoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F4BBB911C4CA7EF003D3CD2 /* CommonCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonCryptoTests.swift; sourceTree = "<group>"; };
 		7F4BBB931C4CA7EF003D3CD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommonCrypto.xcconfig; sourceTree = "<group>"; };
-		7F4BBB9B1C4CA8CE003D3CD2 /* iphoneos.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = iphoneos.modulemap; sourceTree = "<group>"; };
-		7F4BBB9C1C4CA8E3003D3CD2 /* iphonesimulator.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = iphonesimulator.modulemap; sourceTree = "<group>"; };
-		7F4BBB9D1C4CA8FC003D3CD2 /* macosx.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = macosx.modulemap; sourceTree = "<group>"; };
-		7F4BBBA01C4CAA46003D3CD2 /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
 		7F4BBBA31C4CAB82003D3CD2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		7F4BBBA61C4CAD34003D3CD2 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		7F4BBBB91C4DF59D003D3CD2 /* String+SwiftKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+SwiftKit.swift"; sourceTree = "<group>"; };
@@ -168,18 +162,6 @@
 			name = Random;
 			sourceTree = "<group>";
 		};
-		7F4BBB841C4CA7EE003D3CD2 /* CommonCrypto */ = {
-			isa = PBXGroup;
-			children = (
-				7F4BBB871C4CA7EE003D3CD2 /* Info.plist */,
-				7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */,
-				7F4BBB9B1C4CA8CE003D3CD2 /* iphoneos.modulemap */,
-				7F4BBB9C1C4CA8E3003D3CD2 /* iphonesimulator.modulemap */,
-				7F4BBB9D1C4CA8FC003D3CD2 /* macosx.modulemap */,
-			);
-			path = CommonCrypto;
-			sourceTree = "<group>";
-		};
 		7F4BBB901C4CA7EF003D3CD2 /* CommonCryptoTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -193,10 +175,8 @@
 			isa = PBXGroup;
 			children = (
 				7F4BBBA31C4CAB82003D3CD2 /* libz.tbd */,
-				7F4BBBA01C4CAA46003D3CD2 /* libcommonCrypto.tbd */,
 				7F79E51F1C4B1D7800406DD2 /* SwiftKit */,
 				7F79E52B1C4B1D7800406DD2 /* SwiftKitTests */,
-				7F4BBB841C4CA7EE003D3CD2 /* CommonCrypto */,
 				7F4BBB901C4CA7EF003D3CD2 /* CommonCryptoTests */,
 				7F79E51E1C4B1D7800406DD2 /* Products */,
 			);
@@ -567,7 +547,6 @@
 /* Begin XCBuildConfiguration section */
 		7F4BBB941C4CA7EF003D3CD2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -587,7 +566,6 @@
 		};
 		7F4BBB951C4CA7EF003D3CD2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F4BBB9A1C4CA83C003D3CD2 /* CommonCrypto.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
