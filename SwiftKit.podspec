@@ -90,7 +90,7 @@ s.source       = { :git => "https://github.com/AldrinClemente/Swift-Kit.git", :t
 #  Not including the public_header_files will make all headers public.
 #
 
-s.source_files  = "SwiftKit/*"
+s.source_files  = "SwiftKit/*.swift"
 s.exclude_files = "SwiftKitTests"
 
 # s.public_header_files = "SwiftKit/*.h"
