@@ -63,7 +63,7 @@ open class IAPHelper: NSObject {
         SKPaymentQueue.default().restoreCompletedTransactions()
     }
     
-    open static func canMakePayments() -> Bool {
+    public static func canMakePayments() -> Bool {
         return SKPaymentQueue.canMakePayments()
     }
 }
@@ -104,13 +104,16 @@ extension IAPHelper: SKPaymentTransactionObserver {
                 break
             case .failed:
                 print("Failed")
-                handler.failed(transaction.payment.productIdentifier, withError: transaction.error! as NSError)
+                if let transactionError = transaction.error {
+                    handler.failed(transaction.payment.productIdentifier, withError: transactionError as NSError)}
                 queue.finishTransaction(transaction)
                 break
             case .restored:
                 print("Restored")
-                restoredProductIdentifiers.append(transaction.original!.payment.productIdentifier)
+                restoredProductIdentifiers.append(transaction.original?.payment.productIdentifier ?? String.init())
                 queue.finishTransaction(transaction)
+                break
+            @unknown default:
                 break
             }
         }

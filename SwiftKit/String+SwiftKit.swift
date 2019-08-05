@@ -25,19 +25,25 @@
 import Foundation
 
 public extension String {
-    public func encrypt(_ password: String) -> Data? {
-        return Crypto.encrypt(data: self.utf8EncodedData!, password: password)
+    func encrypt(_ password: String) -> Data? {
+        guard let encodedData = self.utf8EncodedData else {
+            return nil
+        }
+        return Crypto.encrypt(data: encodedData, password: password)
     }
     
-    public func decrypt(_ password: String) -> Data? {
-        return Crypto.decrypt(encryptedMessage: self.utf8EncodedData!, password: password)
+    func decrypt(_ password: String) -> Data? {
+        guard let encodedData = self.utf8EncodedData else {
+            return nil
+        }
+        return Crypto.decrypt(encryptedMessage: encodedData, password: password)
     }
     
-    public var base64EncodedData: Data? {
+    var base64EncodedData: Data? {
         return self.data(using: String.Encoding.utf8)?.base64DecodedData
     }
     
-    public var base64EncodedString: String? {
+    var base64EncodedString: String? {
         if let data = base64EncodedData {
             return String(data: data, encoding: String.Encoding.utf8)
         } else {
@@ -45,7 +51,7 @@ public extension String {
         }
     }
     
-    public var base64DecodedData: Data? {
+    var base64DecodedData: Data? {
         if let data = self.data(using: String.Encoding.utf8) {
             return Data(base64Encoded: data, options: .ignoreUnknownCharacters)
         } else {
@@ -53,7 +59,7 @@ public extension String {
         }
     }
     
-    public var base64DecodedString: String? {
+    var base64DecodedString: String? {
         if let data = base64DecodedData {
             return String(data: data, encoding: String.Encoding.utf8)
         } else {
@@ -61,15 +67,15 @@ public extension String {
         }
     }
     
-    public var utf8EncodedData: Data? {
+    var utf8EncodedData: Data? {
         return self.data(using: String.Encoding.utf8)
     }
     
-    public var sha1: String {
+    var sha1: String {
         return Crypto.SHA1(utf8EncodedData!)
     }
     
-    public var md5: String {
+    var md5: String {
         return Crypto.MD5(utf8EncodedData!)
     }
     
@@ -77,7 +83,7 @@ public extension String {
     // This percent-escapes all characters besize the alphanumeric character set and "-", ".", "_", and "~".
     // http://www.ietf.org/rfc/rfc3986.txt
     // :returns: Return precent escaped string.
-    public var stringByAddingPercentEncodingForURLQuery: String? {
+    var stringByAddingPercentEncodingForURLQuery: String? {
         let characterSet = NSMutableCharacterSet.alphanumeric()
         characterSet.addCharacters(in: "-._~")
         return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)

@@ -45,7 +45,10 @@ open class Request {
         
         let encodedURL = queryParameters.count > 0 ? "\(url)?\(queryParameters.stringFromQueryParameters)" : url
         
-        request = URLRequest(url: URL(string: encodedURL)!)
+        if let url = URL(string: encodedURL) {
+            request = URLRequest(url: url)
+        }
+        
         request.httpMethod = method.rawValue
     }
     
@@ -135,23 +138,25 @@ open class Request {
     }
     
     open func execute() -> Self {
-        if bodyProvider != nil {
-            request.httpBody = bodyProvider!()
+        if let bProvider = bodyProvider {
+            request.httpBody = bProvider()
         }
         task = session.dataTask(with: request, completionHandler: handleResponse)
         if isTrustedHost {
             task.trustHost()
             print("\(logTag!) SSL Verification Disabled **********")
         }
-        if logTag != nil {
-            print("\(logTag!) Endpoint: \(request.url!.absoluteString)")
-            for (k, v) in request.allHTTPHeaderFields! {
-                print("\(logTag!) Request Header: \(k): \(v)")
+        if let lTag = logTag {
+            if let endpoint = request.url?.absoluteString {
+                print("\(lTag) Endpoint: \(endpoint)")
+            }
+            for (k, v) in (request.allHTTPHeaderFields ?? [String:String]()) {
+                print("\(lTag) Request Header: \(k): \(v)")
             }
             if let body = request.httpBody?.utf8EncodedString {
-                print("\(logTag!) Request Body: \(body)")
+                print("\(lTag) Request Body: \(body)")
             } else {
-                print("\(logTag!) Request Body: nil")
+                print("\(lTag) Request Body: nil")
             }
         }
         if (mockResponse == nil) {
@@ -177,7 +182,7 @@ open class Request {
     fileprivate func executeFromQueueIfFree() {
         if Request.pendingRequest == nil && Request.requestQueue.count > 0 {
             Request.pendingRequest = Request.requestQueue.removeFirst()
-            Request.pendingRequest!.execute()
+            _ = Request.pendingRequest?.execute()
         }
     }
     
@@ -187,16 +192,16 @@ open class Request {
     }
     
     private func handleResponse(response: Response?) {
-        if logTag != nil {
-            if let statusMessage = response!.statusMessage {
-                print("\(logTag!) Response Message: \(statusMessage)")
+        if let lTag = logTag {
+            if let statusMessage = response?.statusMessage {
+                print("\(lTag) Response Message: \(statusMessage)")
             } else {
-                print("\(logTag!) Response Message: nil")
+                print("\(lTag) Response Message: nil")
             }
-            if let content = response!.data?.utf8EncodedString {
-                print("\(logTag!) Response Content: \(content)")
+            if let content = response?.data?.utf8EncodedString {
+                print("\(lTag) Response Content: \(content)")
             } else {
-                print("\(logTag!) Response Content: nil")
+                print("\(lTag) Response Content: nil")
             }
         }
         responseHandler?(response!)

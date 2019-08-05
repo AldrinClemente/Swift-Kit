@@ -88,14 +88,27 @@ public struct Crypto {
     }
     
     public static func encrypt(data: Data, password: String, spec: Spec = Spec()) -> Data? {
-        let salt = generateSecureRandomData(length: spec.saltLength)!
-        let key = PBKDF2(password: password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm)!
-        let iv = generateSecureRandomData(length: spec.algorithm.blockSize)!
-        let encryptedData = encrypt(data: data, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)!
-        
-        let hmacSalt = generateSecureRandomData(length: spec.hmacSaltLength)!
-        let hmacKey = PBKDF2(password: password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm)!
-        let hmac = HMAC(key: hmacKey, message: encryptedData, algorithm: spec.macAlgorithm)!
+        guard let salt = generateSecureRandomData(length: spec.saltLength) else {
+            return nil
+        }
+        guard let key = PBKDF2(password: password, salt: salt, iterations: spec.keyDerivationIterations, length: spec.algorithm.minKeySize, algorithm: spec.prfAlgorithm) else {
+            return nil
+        }
+        guard let iv = generateSecureRandomData(length: spec.algorithm.blockSize) else {
+            return nil
+        }
+        guard let encryptedData = encrypt(data: data, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding) else {
+            return nil
+        }
+        guard let hmacSalt = generateSecureRandomData(length: spec.hmacSaltLength) else {
+            return nil
+        }
+        guard let hmacKey = PBKDF2(password: password, salt: hmacSalt, iterations: spec.keyDerivationIterations, length: spec.hmacKeyLength, algorithm: spec.prfAlgorithm) else {
+            return nil
+        }
+        guard let hmac = HMAC(key: hmacKey, message: encryptedData, algorithm: spec.macAlgorithm) else {
+            return nil
+        }
         
         // TODO: Consider adding versioning in case of change in format later
         var message = Data()
@@ -143,7 +156,7 @@ public struct Crypto {
         
         return decrypt(data: encryptedData, key: key, iv: iv, algorithm: spec.algorithm, blockCipherMode: spec.blockCipherMode, padding: spec.padding)
     }
-
+    
     
     
     // Encryption / Decryption
@@ -170,40 +183,55 @@ public struct Crypto {
         let options: CCOptions = UInt32(opts)
         
         var keyData = key
-        let keyBytes: UnsafeMutablePointer<Void> = keyData.withUnsafeMutableBytes { return $0 }
-        let keyLength = size_t(keyData.count)
         
-        var ivData = iv != nil ? iv! : Data(count: algorithm.blockSize)
-        let ivPointer: UnsafeMutablePointer<Void> = ivData.withUnsafeMutableBytes { return $0 }
+        var ivData = Data(count: algorithm.blockSize)
+        if let iv = iv { ivData = iv}
         
-        var dataBytes: UnsafePointer<Void> = data.withUnsafeBytes { return $0 }
-        let dataLength = size_t(data.count)
-        
-        var processedData = Data(count: Int(dataLength) + algorithm.blockSize)
-        let cryptPointer: UnsafeMutablePointer<Void> = processedData.withUnsafeMutableBytes { return $0 }
-        let cryptLength = size_t(processedData.count)
-        
-        var numBytesProcessed: size_t = 0
-        
-        let cryptStatus = CCCrypt(
-            operation, // operation
-            cryptAlgorithm, // algorithm
-            options, // options
-            keyBytes, // key
-            keyLength, // key length
-            ivPointer, // iv
-            dataBytes, // data in
-            dataLength, // data in length
-            cryptPointer, // data out
-            cryptLength, // data out length
-            &numBytesProcessed // data out moved
-        )
-        
-        if Int(cryptStatus) == Int(kCCSuccess) {
-            return processedData.subdata(in: 0..<numBytesProcessed)
-        } else {
+        if let keyBytes = (keyData.withUnsafeMutableBytes { (unsafeMutableRawBufferPointer) -> UnsafeMutableRawPointer? in
+            return unsafeMutableRawBufferPointer.baseAddress}),
+            let ivPointer = (ivData.withUnsafeMutableBytes { (unsafeMutableRawBufferPointer) -> UnsafeMutableRawPointer? in
+                return unsafeMutableRawBufferPointer.baseAddress}),
+            let dataBytes = (data.withUnsafeBytes { (unsafeRawBufferPointer) -> UnsafeRawPointer? in
+                return unsafeRawBufferPointer.baseAddress}) {
+            
+            let keyLength = size_t(keyData.count)
+            
+            let dataLength = size_t(data.count)
+            
+            var processedData = Data(count: Int(dataLength) + algorithm.blockSize)
+            
+            if let cryptPointer = (processedData.withUnsafeMutableBytes { (unsafeMutableRawBufferPointer) -> UnsafeMutableRawPointer? in
+                return unsafeMutableRawBufferPointer.baseAddress}) {
+                
+                let cryptLength = size_t(processedData.count)
+                
+                var numBytesProcessed: size_t = 0
+                
+                let cryptStatus = CCCrypt(
+                    operation, // operation
+                    cryptAlgorithm, // algorithm
+                    options, // options
+                    keyBytes, // key
+                    keyLength, // key length
+                    ivPointer, // iv
+                    dataBytes, // data in
+                    dataLength, // data in length
+                    cryptPointer, // data out
+                    cryptLength, // data out length
+                    &numBytesProcessed // data out moved
+                )
+                
+                if Int(cryptStatus) == Int(kCCSuccess) {
+                    return processedData.subdata(in: 0..<numBytesProcessed)
+                } else {
+                    return nil
+                }
+            }
+            
             return nil
         }
+        
+        return nil
     }
     
     // PKCS7
@@ -230,26 +258,34 @@ public struct Crypto {
         let hmacAlgorithm = UInt32(algorithm.value)
         
         let keyData = key
-        let keyBytes: UnsafePointer<Void> = keyData.withUnsafeBytes { return $0 }
-        let keyLength = size_t(keyData.count)
         
         let messageData = message
-        let messageBytes: UnsafePointer<Void> = messageData.withUnsafeBytes { return $0 }
-        let messageLength = size_t(messageData.count)
         
         var data = Data(count: algorithm.macLength)
-        let mac : UnsafeMutablePointer<Void> = data.withUnsafeMutableBytes { return $0 }
         
-        CCHmac(
-            hmacAlgorithm, // algorithm
-            keyBytes, // key
-            keyLength, // key length
-            messageBytes, // data
-            messageLength, // data length
-            mac // mac
-        )
-        
-        return data
+        if let keyBytes = (keyData.withUnsafeBytes { (unsafeRawBufferPointer) -> UnsafeRawPointer? in
+            return unsafeRawBufferPointer.baseAddress}),
+            let messageBytes = (messageData.withUnsafeBytes { (unsafeRawBufferPointer) -> UnsafeRawPointer? in
+                return unsafeRawBufferPointer.baseAddress}),
+            let mac = (data.withUnsafeMutableBytes { (unsafeMutableRawBufferPointer) -> UnsafeMutableRawPointer? in
+                return unsafeMutableRawBufferPointer.baseAddress}) {
+            
+            let keyLength = size_t(keyData.count)
+            
+            let messageLength = size_t(messageData.count)
+            
+            CCHmac(
+                hmacAlgorithm, // algorithm
+                keyBytes, // key
+                keyLength, // key length
+                messageBytes, // data
+                messageLength, // data length
+                mac // mac
+            )
+            
+            return data
+        }
+        return nil
     }
     
     // PBKDF2
@@ -258,44 +294,56 @@ public struct Crypto {
     public static func PBKDF2(password: String, salt: Data, iterations: Int, length: Int, algorithm: PRFAlgorithm) -> Data? {
         let pbkdfAlgorithm = UInt32(kCCPBKDF2)
         let passwordData = password.utf8EncodedData!
-        let passwordBytes: UnsafePointer<Int8> = passwordData.withUnsafeBytes { return $0 }
-        let passwordLength = size_t(passwordData.count)
-        
-        let saltBytes: UnsafePointer<UInt8> = salt.withUnsafeBytes { return $0 }
-        let saltLength = size_t(salt.count)
         
         let prfAlgorithm = UInt32(algorithm.value)
         
         let rounds = UInt32(iterations)
         
         var key = Data(count: length)
-        let keyBytes: UnsafeMutablePointer<UInt8> = key.withUnsafeMutableBytes { return $0 }
-        let keyLength = size_t(key.count)
         
-        let result = CCKeyDerivationPBKDF(
-            pbkdfAlgorithm, // password-based key derivation algorithm
-            passwordBytes, // password
-            passwordLength, // password length
-            saltBytes, // salt
-            saltLength, // salt length
-            prfAlgorithm, // pseudo random algorithm
-            rounds, // rounds
-            keyBytes, // key
-            keyLength // key length
-        )
-        
-        if Int(result) == Int(kCCSuccess) {
-            return key
-        } else {
-            return nil
+        if  let passwordBytes = (passwordData.withUnsafeBytes { (unsafeRawBufferPointer) -> UnsafePointer<Int8>? in
+            return unsafeRawBufferPointer.baseAddress?.bindMemory(to: Int8.self, capacity: passwordData.count)}),
+            let saltBytes = (salt.withUnsafeBytes { (unsafeRawBufferPointer) -> UnsafePointer<UInt8>? in
+                return unsafeRawBufferPointer.baseAddress?.bindMemory(to: UInt8.self, capacity: salt.count)}),
+            let keyBytes = (key.withUnsafeMutableBytes { (unsafeMutableRawBufferPointer) -> UnsafeMutablePointer<UInt8>? in
+                return unsafeMutableRawBufferPointer.baseAddress?.bindMemory(to: UInt8.self, capacity: length)}) {
+            
+            let passwordLength = size_t(passwordData.count)
+            
+            let saltLength = size_t(salt.count)
+            
+            let keyLength = size_t(key.count)
+            
+            let result = CCKeyDerivationPBKDF(
+                pbkdfAlgorithm, // password-based key derivation algorithm
+                passwordBytes, // password
+                passwordLength, // password length
+                saltBytes, // salt
+                saltLength, // salt length
+                prfAlgorithm, // pseudo random algorithm
+                rounds, // rounds
+                keyBytes, // key
+                keyLength // key length
+            )
+            
+            if Int(result) == Int(kCCSuccess) {
+                return key
+            } else {
+                return nil
+            }
         }
+        
+        return nil
     }
     
     // Hash
     // ********************************************************************************
     
     public static func SHA1(_ text: String) -> String {
-        return SHA1(text.data(using: String.Encoding.utf8)!)
+        guard let data = text.data(using: String.Encoding.utf8) else {
+            return ""
+        }
+        return SHA1(data)
     }
     
     public static func SHA1(_ data: Data) -> String {
@@ -306,7 +354,10 @@ public struct Crypto {
     }
     
     public static func MD5(_ text: String) -> String {
-        return MD5(text.data(using: String.Encoding.utf8)!)
+        guard let data = text.data(using: String.Encoding.utf8) else {
+            return ""
+        }
+        return MD5(data)
     }
     
     public static func MD5(_ data: Data) -> String {
@@ -321,9 +372,15 @@ public struct Crypto {
     
     public static func generateSecureRandomData(length: Int) -> Data? {
         var data = Data(count: length)
-        let result = data.withUnsafeMutableBytes {
-            return SecRandomCopyBytes(kSecRandomDefault, length, $0)
+        let result = data.withUnsafeMutableBytes { (unsafeMutableRawBufferPointer) -> Int32 in
+            if let baseAddress = unsafeMutableRawBufferPointer.baseAddress {
+                return SecRandomCopyBytes(kSecRandomDefault, length, baseAddress)
+            }
+            else {
+                return -1
+            }
         }
+        
         if result == 0 {
             return data
         } else {

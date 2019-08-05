@@ -65,7 +65,7 @@ open class SecureData {
         self.j = SecureData.readData(data, password: password)
     }
     
-    open static func readData(_ data: Data, password: String? = nil) -> JSON {
+    public static func readData(_ data: Data, password: String? = nil) -> JSON {
         var d = data
         if password != nil && data.count > 0 {
             if let decryptedData = data.decrypt(password!, spec: defaultSpec) {
@@ -81,10 +81,7 @@ open class SecureData {
     }
     
     open func put(_ key: String, value: Int) {
-        print(j[key].int)
-        print("setting value to \(value)")
         j[key].set(value)
-        print(j[key].int)
     }
     
     open func put(_ key: String, value: Double) {
@@ -199,7 +196,7 @@ open class SecureDataFile: SecureData {
         super.init(data: data, password: password)
     }
     
-    open static func getDefault() -> SecureDataFile {
+    public static func getDefault() -> SecureDataFile {
         return SecureDataFile(fileName: "data")
     }
     

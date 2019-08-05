@@ -88,7 +88,7 @@ public struct Toast {
         
         UIView.animate(withDuration: 0.5,
             delay: duration - 0.5,
-            options: UIViewAnimationOptions.beginFromCurrentState,
+            options: UIView.AnimationOptions.beginFromCurrentState,
             animations: {
                 Toast.text.alpha = 0
             },
