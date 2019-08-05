@@ -46,13 +46,6 @@
 			remoteGlobalIDString = 7F4BBB821C4CA7EE003D3CD2;
 			remoteInfo = CommonCrypto;
 		};
-		7F4BBB9E1C4CAA39003D3CD2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7F79E5141C4B1D7800406DD2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7F4BBB821C4CA7EE003D3CD2;
-			remoteInfo = CommonCrypto;
-		};
 		7F79E5291C4B1D7800406DD2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7F79E5141C4B1D7800406DD2 /* Project object */;
@@ -364,7 +357,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				7F4BBB9F1C4CAA39003D3CD2 /* PBXTargetDependency */,
 			);
 			name = SwiftKit;
 			productName = SwiftKit;
@@ -531,11 +523,6 @@
 			isa = PBXTargetDependency;
 			target = 7F4BBB821C4CA7EE003D3CD2 /* CommonCrypto */;
 			targetProxy = 7F4BBB8E1C4CA7EF003D3CD2 /* PBXContainerItemProxy */;
-		};
-		7F4BBB9F1C4CAA39003D3CD2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7F4BBB821C4CA7EE003D3CD2 /* CommonCrypto */;
-			targetProxy = 7F4BBB9E1C4CAA39003D3CD2 /* PBXContainerItemProxy */;
 		};
 		7F79E52A1C4B1D7800406DD2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
